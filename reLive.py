@@ -37,7 +37,7 @@ def HangDown():
     mouseClick(process,(width - 150),145)
 #复活 
 def ReliveDown():
-    mouseClick(process,700,420)
+    mouseClick(process,width/2,height/2+60)
 #设置 
 def settingDown():
     mouseClick(process,(width - 15),85)
@@ -46,7 +46,7 @@ def settingDown():
 # 牛
 def NiuDown():
     
-    mouseClick(process,(width/2+90),(height/2-115))
+    mouseClick(process,(width/2+90),(height/2-110))
 # 蛇
 def SheDown():
     
@@ -80,7 +80,7 @@ def ZhiZhuDown():
 # 蜘蛛2
 def ZhiZhu2Down():
     
-    mouseClick(process,(width/2-170),(height/2+35))
+    mouseClick(process,(width/2-170),(height/2+45))
 # 豹子
 def BaoZiDown():
     
@@ -124,8 +124,6 @@ def clickGoodsMenu(pageNum,row,column,goodsType = 'suipian'):
     clickRow = 5
     if goodsType == 'suipian':clickRow = 5
     if goodsType == 'huoneng':clickRow = 2
-    if goodsType == 'piliang':clickRow = 2
-    if goodsType == 'first':clickRow = 1
     pageSizeX,pageSizeY = BackPageDown(pageNum)
     time.sleep(0.2)
     # 点击物品
@@ -134,8 +132,6 @@ def clickGoodsMenu(pageNum,row,column,goodsType = 'suipian'):
     # 点击物品菜单属性
     sellGoodsDown(goodsX,goodsY,clickRow)
     time.sleep(0.2)
-    # 批量的话再点一次
-    if goodsType == 'piliang':sellGoodsDown(goodsX,goodsY,clickRow)
     # 碎片点击确定卖出
     if goodsType == 'suipian':sellGoodsConfirm() 
     # 火能再次点击当前
@@ -199,7 +195,7 @@ def eatFire(house):
         time.sleep(0.5)
         mouseClick(process,width/2+120,height/2+70)
         # 循环吞噬蓝火
-        for i in range(1,20):
+        for i in range(1,16):
             mouseClick(process,width/2,height/2+115)
             time.sleep(0.2)
             mouseClick(process,width/2-80,height/2+30)
@@ -209,8 +205,8 @@ def eatSmallFire():
     packPage = 2
     startRow = 1
     startColumn = 1
-    endRow = 4
-    endColumn = 2
+    endRow = 8
+    endColumn = 8
     def clickAfterClickFire(a,b,c,d):
         clickGoodsMenu(a,b,c,d)
         time.sleep(0.2)
@@ -237,35 +233,12 @@ def eatSmallFire():
             else:
                 for column in range(1,9):
                     clickAfterClickFire(packPage,row,column,'huoneng')
-def openSometing(double = 'piliang'):
-    packPage = 2
-    startRow = 1
-    startColumn = 1
-    endRow = 5
-    endColumn = 8
-    def clickAfterClickFire(a,b,c,d):
-        clickGoodsMenu(a,b,c,d)
-        time.sleep(0.2)
-    if(startRow == endRow):
-        for column in range(startColumn,endColumn+1):
-            clickAfterClickFire(packPage,startRow,column,double)
-    else:
-        for row in range(startRow,endRow+1):
-            if row == startRow:
-                for column in range(startColumn,9):
-                    clickAfterClickFire(packPage,row,column,double)
-            elif row == endRow:
-                for column in range(1,endColumn+1):
-                    clickAfterClickFire(packPage,row,column,double)
-            else:
-                for column in range(1,9):
-                    clickAfterClickFire(packPage,row,column,double)
 def eatBlueFire():
     packPage = 2
-    startRow = 3
-    startColumn = 6
-    endRow = 7
-    endColumn = 7
+    startRow = 6
+    startColumn = 1
+    endRow = 8
+    endColumn = 2
     def clickAfterClickFire(a,b,c,d):
         clickGoodsMenu(a,b,c,d)
         time.sleep(0.2)
@@ -287,7 +260,6 @@ def eatBlueFire():
         BackDown()
         time.sleep(0.2)
         BackDown()
-        time.sleep(0.2)
     if(startRow == endRow):
         for column in range(startColumn,endColumn+1):
             clickAfterClickFire(packPage,startRow,column,'huoneng')
@@ -308,34 +280,16 @@ def relive():
     def http_header(packet):
         global state
         http_packet = str(packet)
-        if http_packet.find('GET /S50276/com/ui/role/shizhuang/2110001_3.swf HTTP') != -1:
+        if http_packet.find("GET /S50276/com/ui/role/shizhuang/2110001_3.swf HTTP/1.1") != -1:
             if(state == False):
-                mouseClick(process,width/2,height/2+60)
                 state = True
+                ReliveDown()
             else:
-                time.sleep(0.3)
-                HangDown()
                 state = False
+                time.sleep(0.7)
+                HangDown()
 
     scapy.sniff(prn=http_header,count=0,iface="Realtek PCIe GbE Family Controller",filter="tcp",store=0)
-
-#赏金
-def shangjin():
-    for i in range(1,300):
-        mouseClick(process,width-160,315)
-        time.sleep(1)
-        HangDown()
-        time.sleep(1)
-        mouseClick(process,340,height-100)
-        time.sleep(80)
-        mouseClick(process,340,height-100)
-        time.sleep(40)
-        mouseClick(process,width-160,315)
-        time.sleep(1)
-        for i in range(1,4):
-            mouseClick(process,width/2+235,height/2+160)
-            time.sleep(0.5)
-        time.sleep(1)
 
 # 全包检索43s，卖出帝魂
 def sellDiHun(minPageNum = 1,maxPageNum = 5):
@@ -343,9 +297,6 @@ def sellDiHun(minPageNum = 1,maxPageNum = 5):
     # 点击传送
     time.sleep(0.2)
     mouseClick(process,width/2+295,height/2-11)
-    # 点击挂机,避免打坐
-    time.sleep(0.5)
-    HangDown()
     # 打开背包
     time.sleep(0.5)
     mouseClick(process,width/2-45,height/2+95)
@@ -453,32 +404,24 @@ def DiHunClick(id,runTimeArray):
     # 点击位置后关闭地图
     MapDown()
 # 
-def Guaji(oneSleep = 150,jiasu=True,sum=False):
+def Guaji(oneSleep = 150):
     # 怪物选择青铜
     # settingDown()
     count = 1
-    shudu = 1 if jiasu else 1.3
     runTimeArray = {
-        1:11*shudu,
-        2:4*shudu,
-        3:6*shudu,
-        4:9*shudu,
-        5:3*shudu,
-        6:4*shudu,
-        7:4*shudu,
-        8:7*shudu,
-        9:7*shudu,
-        10:4*shudu,
+        1:11,
+        2:4,
+        3:6,
+        4:9,
+        5:3,
+        6:4,
+        7:4,
+        8:7,
+        9:7,
+        10:4,
     }
     allTime = 1800
-    for _ in (range(1,sum) if sum else repeat(None)):
-        if count == 1:
-            # 卖完帝魂,根据单个时长来确定吃几瓶药
-            yao = int((oneSleep * 10)/300)
-            for _2 in range(1,yao):
-                time.sleep(1)
-                mouseClick(process,width/2-220,height-12)
-            time.sleep(0.2)
+    for _ in repeat(None):
         # 地图上点击位置后，延时到达后
         DiHunClick(count,runTimeArray)
         # 点击挂机按钮
@@ -492,10 +435,7 @@ def Guaji(oneSleep = 150,jiasu=True,sum=False):
         if count == 10:
             # 减去跑路到第一个帝魂的时间,再减去刷背包时间43s(实际4个包+传送大概35s)
             # 先休息差2-5 50s刷新,但是防止一些问题，可以多休息10s
-            sleepTime = allTime-runTimeArray[1]-50+10
-            if(sleepTime < 0):
-                sleepTime = 1
-            time.sleep(sleepTime)
+            time.sleep(allTime-runTimeArray[1]-50+10)
             # 2-5 50s
             sellDiHun(2,5)
             allTime = 1800
@@ -576,21 +516,16 @@ def loadFuncMenu(ProcessId,chidrenNeed):
     # if a == '2':
     #     return getBrowser()
     # mouseClick(flashID,width/2,height/2)
-    # mouseClick(process,width/2-220,height-12)
     # sellClothesFragments(3,1,1,8,8)
     # mouseDrag(process,983,303,674,305)
     # mouseDrag(process,1023,303,714,305)
-    # sellDiHun(3,5)
-    # Guaji(40,True,4)
-    # Guaji(150)
-    # Guaji(20)
+    # sellDiHun(3,4)
+    # time.sleep(800)
+    # Guaji()
     # relive()
-    # eatFire(5)
-    # openSometing()
-    # openSometing('first')
+    eatFire(4)
     # eatSmallFire()
     # eatBlueFire()
-    shangjin()
     # zhanMo()
 
 
