@@ -4,6 +4,7 @@ import win32api
 import win32con
 import win32com
 import time
+import json
 def getPixel(hwnd,position,hwndDC):
     x,y = position
     hwndDC = hwndDC or win32gui.GetDC(hwnd)
@@ -19,11 +20,10 @@ def window_capture(filename,hwnd):
     w = right - left
     h = bottom - top
     # 获取居中的像素点
-    pixel = win32gui.GetPixel(hwndDC,int(w/2),int(h/2))
-    print(pixel)
-    time.sleep(5)
-    print(pixel)
-    time.sleep(5)
+    # (-1 -1 1120657) (0 -1 1120657) (1 -1 1120657)
+    # (-1 0 1316745) (0 0 399157) (0 0 399157)
+    # (-1 1 399157) (0 1 399157) (1 1 13497846)
+    pixel = win32gui.GetPixel(hwndDC,int(w/2 -1),int(h/2 + 50))
     print(pixel)
 # window_capture("haha.jpg")
 array = []
@@ -58,7 +58,12 @@ print(childrenArray)
 hwnd = childrenArray[0]['processId']
 # 窗口先设置为活跃再截图，父窗口才行
 # win32gui.SetForegroundWindow(array[0]['processId'])
-window_capture("haha.jpg",hwnd)
+# window_capture("haha.jpg",hwnd)
+file = open('./config.json', 'r')
+content = file.read()
+configJSON = json.loads(content)
+print(configJSON['stayTimeArray'])
+file.close()
 # beg = time.time()
 # for i in range(10):
 #     window_capture("haha.jpg")

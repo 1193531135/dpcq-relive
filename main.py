@@ -6,7 +6,7 @@ import win32gui
 import win32api
 import win32con
 import time
-
+import json
 import scapy.all as scapy
 
 # import scapy_http.http
@@ -539,14 +539,30 @@ height = 0
 process = 0
 # 是否开启地图
 mapState=False
+configJSON = False
 funcArry = [
     { "name":"帝魂挂机","id":1,"state":False },
     { "name":"自动复活","id":2,"state":False },
     { "name":"帝魂挂机","id":1,"state":False },
 ]
 
-
-
+def menu():
+    # global configJSON
+    def readConfig():
+        global configJSON
+        file = open('./config.json', 'r')
+        content = file.read()
+        configJSON = json.loads(content)
+        file.close()
+    def writeConfig():
+        content = json.dumps(configJSON)
+        file = open('./config.json', 'w')
+        file.write(content)
+        file.close()
+    readConfig()
+    print(f'''键位 |    功能描述    |    当前状态''')
+    print(f'''1    |    自动复活    |    {'已开启' if configJSON['func']['relive'] else '已关闭'}''')
+    print(f'''2    |    挂机控制    |    {'到怪的位置处才开始挂' if configJSON['func']['hang'] else '时时挂机状态'}''')
 # mainProgram
 def loadFuncMenu(ProcessId,chidrenNeed):
     global height,width,process
@@ -557,7 +573,6 @@ def loadFuncMenu(ProcessId,chidrenNeed):
         input('未检测到目标浏览器的flash，请检查游戏是否打开')
         return getBrowser()
     print('!!进入当前功能页请勿缩放，最小最大化指定的的窗口!!')
-    print('!!测试是否为选定页面，将会打开并隔一秒关闭页面的地图')
     flashID = childrenID[0]["processId"]
     process = flashID
     # 退出全屏
@@ -646,72 +661,3 @@ def getBrowser():
 
 
 getBrowser()
-# 获取主进程id
-# findMainProcess()
-# array = []
-# index = 1
-# print('检索子进程...')
-# win32gui.EnumChildWindows(MainProcessId,getProcessName,0)
-# # system('cls')
-# for item2 in array:
-#     print(f"{index}. {item2['name']}")
-#     index += 1
-# 选择窗口
-# print('————————————————')
-# print('|   id   | name')
-# print('————————————————')
-# lin = 1
-# for x, index in array:
-#     idName = f'{lin}'
-#     if(len(idName) == 1):
-#         idName = f'  {idName}    '
-#     if(len(idName) == 2):
-#         idName = f'  {idName}   '
-#     if(len(idName) == 3):
-#         idName = f'  {idName}  '
-#         print(f'| {idName}| {array[lin-1][x]}')
-#     lin += 1
-# now_id = int(input('输入窗口id：'))
-# windowProcess = array[now_id - 1]['processId']
-
-# 检索子窗口
-# childrenS = []
-
-# win32gui.EnumChildWindows(windowProcess,getChildren,0)
-# print(childrenS)
-
-# windowProcess = childrenS[len(childrenS)-1]['processId']
-
-
-# 退出全屏
-# win32gui.ShowWindow(windowProcess,win32con.SW_SHOWNORMAL)
-
-# # 强制修改窗口大小和位置
-# windwo_width = 1920
-# windwo_height = 1040
-# windowHead = 110 #头部高度
-# # 渲染器少两边少 8个像素
-# win32gui.MoveWindow(windowProcess, 0, 0, windwo_width, windwo_height, True)
-
-# time.sleep(2)
-
-# long_position = win32api.MAKELONG(921, 545)#模拟鼠标指针 传送到指定坐标
-# win32api.SendMessage(windowProcess, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, long_position)#模拟鼠标按下
-# win32api.SendMessage(windowProcess, win32con.WM_LBUTTONUP, win32con.MK_LBUTTON, long_position)#模拟鼠标弹起
-
-# def http_header(packet):
-#   http_packet = str(packet)
-#   if http_packet.find('GET /S50276/com/ui/role/shizhuang/2110001_3.swf HTTP') != -1:
-#     # obj = http_packet.split('\r\n')
-#     # obj = http_packet.replace('\r\n','\n')
-#     # if obj[0].find('b'):
-#     #     obj = obj[1:]
-#     # string = packet.sprintf("{Raw:%Raw.load%}\n")
-#     # print(string)
-#     # if string.find('/crossPromo/manage/template/detail') != -1:
-#     print("<=================This is start===========================>")
-
-# scapy.sniff(prn=http_header,count=0,iface="Realtek PCIe GbE Family Controller",filter="tcp")
-
-
-# 'GET /S50276/com/ui/role/shizhuang/2110001_3.swf HTTP/1.1\r\nHost: ymcdn.aip.cn\r\nConnection: keep-alive\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36 Core/1.77.106.400 QQBrowser/10.9.4626.400\r\nAccept: */*\r\nX-Requested-With: ShockwaveFlash/34.0.0.231\r\nReferer: http://s5013.dpcq.yegame.com/user/game.php\r\nAccept-Encoding: gzip, deflate\r\nAccept-Language: zh-CN,zh;q=0.9\r\n\r\n'
