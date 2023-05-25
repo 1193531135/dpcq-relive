@@ -607,6 +607,7 @@ def findMainProcess(name,chidrenNeed):
         return getBrowser()
     # 只有一个，直接进入控制
     if len(array) == 1:
+        print()
         MainProcessId = array[0]['processId']
     if len(array) > 1:
         for index,item in enumerate(array):
