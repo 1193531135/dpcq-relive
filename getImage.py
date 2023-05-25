@@ -25,13 +25,15 @@ def window_capture(filename,hwnd):
     saveBitMap.CreateCompatibleBitmap(mfcDC, w, h)
     # 高度saveDC，将截图保存到saveBitmap中
     saveDC.SelectObject(saveBitMap)
-    image = { 'w':100,'h':50 }
+    image = { 'w':1,'h':1 }
     # 截取从左上角（0，0）长宽为（w，h）的图片
     # saveDC.BitBlt((0, 0), (w, h), mfcDC, (0, 0), win32con.SRCCOPY)
     # 居中截一个image
     startX = int((w-image['w'])/2)
     starty = int((h-image['h'])/2)
     saveDC.BitBlt((startX,starty), (image['w'], image['h']), mfcDC, (startX, starty), win32con.SRCCOPY)
+    print(saveDC)
+    print(saveBitMap)
     # saveDC.BitBlt(((w-image['w'])/2,(h-image['h'])/2), (image['w'], image['h']), mfcDC, (0, 0), win32con.SRCCOPY)
     saveBitMap.SaveBitmapFile(saveDC, filename)
 
