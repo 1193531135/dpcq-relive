@@ -4,6 +4,8 @@ import win32api
 import win32con
 import win32com
 import time
+from paddleocr import PaddleOCR
+
 def window_capture(filename,hwnd):
     hwnd = hwnd or 0  # 窗口的编号，0号表示当前活跃窗口
     # 根据窗口句柄获取窗口的设备上下文DC（Divice Context）
@@ -21,19 +23,15 @@ def window_capture(filename,hwnd):
     w = right - left
     h = bottom - top
     # print w,h　　　#图片大小
+    image = { 'w':37,'h':17 }
+    # 截取从左上角（0，0）长宽为（w，h）的图片
+    startX = int(w-122)
+    starty = 98
     # 为bitmap开辟空间
-    saveBitMap.CreateCompatibleBitmap(mfcDC, w, h)
+    saveBitMap.CreateCompatibleBitmap(mfcDC,image['w'], image['h'])
     # 高度saveDC，将截图保存到saveBitmap中
     saveDC.SelectObject(saveBitMap)
-    image = { 'w':100,'h':100 }
-    # 截取从左上角（0，0）长宽为（w，h）的图片
-    # saveDC.BitBlt((0, 0), (w, h), mfcDC, (0, 0), win32con.SRCCOPY)
-    # 居中截一个image
-    startX = int((w-image['w'])/2)
-    starty = int((h-image['h'])/2)
-    saveDC.BitBlt((startX,starty), (image['w'], image['h']), mfcDC, (startX, starty), win32con.SRCCOPY)
-    print(saveDC)
-    print(saveBitMap)
+    saveDC.BitBlt((0,0), (image['w'], image['h']), mfcDC, (startX, starty), win32con.SRCCOPY)
     # saveDC.BitBlt(((w-image['w'])/2,(h-image['h'])/2), (image['w'], image['h']), mfcDC, (0, 0), win32con.SRCCOPY)
     saveBitMap.SaveBitmapFile(saveDC, filename)
 
@@ -64,13 +62,16 @@ def getProcessName(jubing, mouse,array,selectName):
                 'processId': jubing,
             })
 win32gui.EnumWindows(lambda j,m:getProcessName(j,m,array,name), 0)
-print(array)
+# print(array)
 win32gui.EnumChildWindows(array[0]['processId'],lambda a,b:getChildren(a,b,childrenArray,True),0)
 print(childrenArray)
 hwnd = childrenArray[0]['processId']
 # 窗口先设置为活跃再截图，父窗口才行
 # win32gui.SetForegroundWindow(array[0]['processId'])
-window_capture("haha.jpg",hwnd)
+window_capture("position.jpg",hwnd)
+ocr = PaddleOCR(use_angle_cls = True,lang="en")
+text=ocr.ocr("./position.jpg",cls=True)
+print(text)
 # beg = time.time()
 # for i in range(10):
 #     window_capture("haha.jpg")

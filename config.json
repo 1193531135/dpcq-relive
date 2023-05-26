@@ -25,5 +25,7 @@
   },
   "relive": true,
   "hang": false,
-  "relavePixel": "1120657 1316745 399157 13497846"
+  "openHit":false,
+  "relavePixel": "1120657 1316745 399157 13497846",
+  "interval":1
 }

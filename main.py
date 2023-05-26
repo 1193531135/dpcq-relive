@@ -546,6 +546,19 @@ funcArry = [
     { "name":"帝魂挂机","id":1,"state":False },
 ]
 
+def menuFunc(funcId):
+    # 自动复活
+    if funcId == 1:
+        configJSON['relive'] = ~configJSON['relive']
+        input(f'''自动复活功能成功修改为 {'已开启' if configJSON['relive'] else '已关闭'}(按任意键返回菜单)''')
+        menu()
+    # 自动复活
+    if funcId == 2:
+        configJSON['hang'] = ~configJSON['hang']
+        print('''到怪的位置处才开始挂: 只有到怪物点的时候才开启时时挂机，离开点''')
+        print('''时时挂机状态: 只有到怪物点的时候才开启''')
+        input(f'''挂机控制功能成功修改为 {'到怪的位置处才开始挂' if configJSON['hang'] else '时时挂机状态'}(按任意键返回菜单)''')
+        menu()
 def menu():
     # global configJSON
     def readConfig():
@@ -560,6 +573,7 @@ def menu():
         file.write(content)
         file.close()
     readConfig()
+    system('cls')
     print(f'''键位             |                功能描述                |    当前状态''')
     print('---------------------------------------------------------------------------')
     print(f'''1                |                自动复活                |    {'已开启' if configJSON['relive'] else '已关闭'}''')
@@ -568,8 +582,28 @@ def menu():
     print('---------------------------------------------------------------------------')
     print(f'''3                |                挂机顺序                |    {configJSON['order']}''')
     print('---------------------------------------------------------------------------')
-    print(f'''4                |        单个怪停留时间('怪物id':时长)    |    {configJSON['order']}''')
+    print(f'''4                |        单个怪停留时间('怪物id':时长)    |    {configJSON['stayTimeArray']}''')
     print('---------------------------------------------------------------------------')
+    print(f'''5                |  扫描强度(自动复活和自动挂机的反应速度) |    {configJSON['interval']}s（单位|秒）''')
+    print('---------------------------------------------------------------------------')
+    print(f'''6                |                开启挂机                 |    {'已开启' if configJSON['openHit'] else '已关闭'}''')
+    print('---------------------------------------------------------------------------')
+    id = input('输入需要修改的功能的键位:')
+    if id == '1' :
+        menuFunc(1)
+    elif id == '2':
+        menuFunc(2)
+    elif id == '3':
+        menuFunc(3)
+    elif id == '4':
+        menuFunc(4)
+    elif id == '4':
+        menuFunc(5)
+    elif id == '4':
+        menuFunc(6)
+    else:
+        input('未找到指令所属功能(按任意键返回菜单)')
+        menu()
 # mainProgram
 def loadFuncMenu(ProcessId,chidrenNeed):
     global height,width,process
