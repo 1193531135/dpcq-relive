@@ -559,6 +559,14 @@ def menuFunc(funcId):
         print('''时时挂机状态: 只有到怪物点的时候才开启''')
         input(f'''挂机控制功能成功修改为 {'到怪的位置处才开始挂' if configJSON['hang'] else '时时挂机状态'}(按任意键返回菜单)''')
         menu()
+
+sleepTime = 1
+def openThreading():
+    global sum,sleepTime
+    sum = sum + 1
+    print(sum)
+    threaProcess = threading.Timer(sleepTime,openThreading)
+    threaProcess.start()
 def menu():
     # global configJSON
     def readConfig():
@@ -574,6 +582,8 @@ def menu():
         file.close()
     readConfig()
     system('cls')
+    # 开启一个线程扫描 用于挂机检测和到点检测 和 复活检测
+    openThreading()
     print(f'''键位             |                功能描述                |    当前状态''')
     print('---------------------------------------------------------------------------')
     print(f'''1                |                自动复活                |    {'已开启' if configJSON['relive'] else '已关闭'}''')

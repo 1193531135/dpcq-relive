@@ -5,6 +5,7 @@ import win32con
 import win32com
 import time
 import json
+import threading
 def getPixel(hwnd,position,hwndDC):
     x,y = position
     hwndDC = hwndDC or win32gui.GetDC(hwnd)
@@ -59,11 +60,15 @@ hwnd = childrenArray[0]['processId']
 # 窗口先设置为活跃再截图，父窗口才行
 # win32gui.SetForegroundWindow(array[0]['processId'])
 # window_capture("haha.jpg",hwnd)
-file = open('./config.json', 'r')
-content = file.read()
-configJSON = json.loads(content)
-print(configJSON['stayTimeArray'])
-file.close()
+sum = 0
+interval = 1
+def openThreading():
+    global sum,interval
+    sum = sum + 1
+    print(sum)
+    threaProcess = threading.Timer(interval,openThreading)
+    threaProcess.start()
+openThreading()
 # beg = time.time()
 # for i in range(10):
 #     window_capture("haha.jpg")
