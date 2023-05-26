@@ -560,9 +560,16 @@ def menu():
         file.write(content)
         file.close()
     readConfig()
-    print(f'''键位 |    功能描述    |    当前状态''')
-    print(f'''1    |    自动复活    |    {'已开启' if configJSON['func']['relive'] else '已关闭'}''')
-    print(f'''2    |    挂机控制    |    {'到怪的位置处才开始挂' if configJSON['func']['hang'] else '时时挂机状态'}''')
+    print(f'''键位             |                功能描述                |    当前状态''')
+    print('---------------------------------------------------------------------------')
+    print(f'''1                |                自动复活                |    {'已开启' if configJSON['relive'] else '已关闭'}''')
+    print('---------------------------------------------------------------------------')
+    print(f'''2                |                挂机控制                |    {'到怪的位置处才开始挂' if configJSON['hang'] else '时时挂机状态'}''')
+    print('---------------------------------------------------------------------------')
+    print(f'''3                |                挂机顺序                |    {configJSON['order']}''')
+    print('---------------------------------------------------------------------------')
+    print(f'''4                |        单个怪停留时间('怪物id':时长)    |    {configJSON['order']}''')
+    print('---------------------------------------------------------------------------')
 # mainProgram
 def loadFuncMenu(ProcessId,chidrenNeed):
     global height,width,process
