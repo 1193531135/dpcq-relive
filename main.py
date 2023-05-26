@@ -552,10 +552,10 @@ def menuFunc(funcId):
         configJSON['relive'] = ~configJSON['relive']
         input(f'''自动复活功能成功修改为 {'已开启' if configJSON['relive'] else '已关闭'}(按任意键返回菜单)''')
         menu()
-    # 自动复活
+    # 挂机控制
     if funcId == 2:
         configJSON['hang'] = ~configJSON['hang']
-        print('''到怪的位置处才开始挂: 只有到怪物点的时候才开启时时挂机，离开点''')
+        print('''到怪的位置处才开始挂: 只有到怪物点的时候才开启时时挂机''')
         print('''时时挂机状态: 只有到怪物点的时候才开启''')
         input(f'''挂机控制功能成功修改为 {'到怪的位置处才开始挂' if configJSON['hang'] else '时时挂机状态'}(按任意键返回菜单)''')
         menu()
