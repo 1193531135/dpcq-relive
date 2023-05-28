@@ -4,7 +4,6 @@ import win32api
 import win32con
 import win32com
 import time
-from paddleocr import PaddleOCR
 
 def window_capture(filename,hwnd):
     hwnd = hwnd or 0  # 窗口的编号，0号表示当前活跃窗口
@@ -19,14 +18,15 @@ def window_capture(filename,hwnd):
     # 创建bigmap准备保存图片
     saveBitMap = win32ui.CreateBitmap()
     # 获取监控器信息
+    # left,top,right,bottom = win32gui.GetWindowRect(hwnd)
     left,top,right,bottom = win32gui.GetWindowRect(hwnd)
     w = right - left
     h = bottom - top
     # print w,h　　　#图片大小
-    image = { 'w':37,'h':17 }
+    image = { 'w':100,'h':100 }
     # 截取从左上角（0，0）长宽为（w，h）的图片
-    startX = int(w-122)
-    starty = 98
+    startX = int(w/2+132)
+    starty = int(h/2-230)
     # 为bitmap开辟空间
     saveBitMap.CreateCompatibleBitmap(mfcDC,image['w'], image['h'])
     # 高度saveDC，将截图保存到saveBitmap中
@@ -69,9 +69,9 @@ hwnd = childrenArray[0]['processId']
 # 窗口先设置为活跃再截图，父窗口才行
 # win32gui.SetForegroundWindow(array[0]['processId'])
 window_capture("position.jpg",hwnd)
-ocr = PaddleOCR(use_angle_cls = True,lang="en")
-text=ocr.ocr("./position.jpg",cls=True)
-print(text)
+# ocr = PaddleOCR(use_angle_cls = True,lang="en")
+# text=ocr.ocr("./position.jpg",cls=True)
+# print(text)
 # beg = time.time()
 # for i in range(10):
 #     window_capture("haha.jpg")

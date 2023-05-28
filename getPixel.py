@@ -11,7 +11,13 @@ def getPixel(hwnd,position,hwndDC):
     hwndDC = hwndDC or win32gui.GetDC(hwnd)
     pixel = win32gui.GetPixel(hwndDC,x,y)
     return pixel
-    
+def mouseClick(windowProcess,x,y):
+    # print(x,y)
+    x = int(x)
+    y = int(y)
+    long_position = win32api.MAKELONG(x, y)#模拟鼠标指针 传送到指定坐标
+    win32api.SendMessage(windowProcess, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, long_position)#模拟鼠标按下
+    win32api.SendMessage(windowProcess, win32con.WM_LBUTTONUP, win32con.MK_LBUTTON, long_position)#模拟鼠标弹起
 def window_capture(filename,hwnd):
     hwnd = hwnd or 0  # 窗口的编号，0号表示当前活跃窗口
     # 获取窗口的设备上下文Device Context。GetWindowDC包括了非客户区，而GetDC仅为客户区
@@ -24,8 +30,29 @@ def window_capture(filename,hwnd):
     # (-1 -1 1120657) (0 -1 1120657) (1 -1 1120657)
     # (-1 0 1316745) (0 0 399157) (0 0 399157)
     # (-1 1 399157) (0 1 399157) (1 1 13497846)
-    pixel = win32gui.GetPixel(hwndDC,int(w/2 -1),int(h/2 + 50))
+    # pixel = win32gui.GetPixel(hwndDC,int(w/2),int(h/2 + 50))
+    # 地图
+    # pixel = win32gui.GetPixel(hwndDC,int(w/2 - 270),int(h/2 - 230))
+    # 牛测试
+    mouseClick(hwnd,(w/2+90),(h/2-115))
+    pixel = win32gui.GetPixel(hwndDC,int(w/2+90),int(h/2-115)) 
+    # 65280 挂机检测右上点 （站立）
+    # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 162),int(h/2 - 240)) 
+    # 65280 挂机检测右下点（站立）
+    # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 162),int(h/2 - 220)) 
+    # 65280 挂机检测左下下点（站立）
+    # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 132),int(h/2 - 230)) 
+
+    # 65280 挂机检测右上点
+    # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 162),int(h/2 - 270)) 
+    # 65280 挂机检测右下点
+    # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 162),int(h/2 - 250)) 
+    # 65280 挂机检测左上点
+    # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 132),int(h/2 - 270)) 
+    # 65280 挂机检测左下点
+    # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 132),int(h/2 - 260)) 
     print(pixel)
+    print(pixel == 65280)
 # window_capture("haha.jpg")
 array = []
 childrenArray = []
@@ -59,16 +86,16 @@ print(childrenArray)
 hwnd = childrenArray[0]['processId']
 # 窗口先设置为活跃再截图，父窗口才行
 # win32gui.SetForegroundWindow(array[0]['processId'])
-# window_capture("haha.jpg",hwnd)
-sum = 0
-interval = 1
-def openThreading():
-    global sum,interval
-    sum = sum + 1
-    print(sum)
-    threaProcess = threading.Timer(interval,openThreading)
-    threaProcess.start()
-openThreading()
+window_capture("haha.jpg",hwnd)
+# sum = 0
+# time1 = 1
+# def setInterval1s():
+#     global sum
+#     sum = sum + 1
+#     print(sum)
+#     threaProcess = threading.Timer(1,setInterval1s)
+#     threaProcess.start()
+# setInterval1s()
 # beg = time.time()
 # for i in range(10):
 #     window_capture("haha.jpg")

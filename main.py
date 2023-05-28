@@ -10,9 +10,13 @@ import json
 import scapy.all as scapy
 
 # import scapy_http.http
+# 返回指定坐标像素点
+def GetPixel(x,y):
+    pixel = win32gui.GetPixel(hwndDC,x,y)
+    return pixel
 # 鼠标点击事件函数
 def mouseClick(windowProcess,x,y):
-    print(x,y)
+    # print(x,y)
     x = int(x)
     y = int(y)
     long_position = win32api.MAKELONG(x, y)#模拟鼠标指针 传送到指定坐标
@@ -37,7 +41,11 @@ def HangDown():
     mouseClick(process,(width - 150),145)
 #复活 
 def ReliveDown():
-    mouseClick(process,700,420)
+    mouseClick(process,(width/2),(height/2 + 65))
+    # time.sleep(0.1)
+    # # 唤起坐骑
+    # win32api.SendMessage(process, win32con.WM_KEYDOWN, 84, 0)
+    # win32api.SendMessage(process, win32con.WM_KEYUP, 84, 0)
 #设置 
 def settingDown():
     mouseClick(process,(width - 15),85)
@@ -45,7 +53,6 @@ def settingDown():
 # 帝魂专用方法
 # 牛
 def NiuDown():
-    
     mouseClick(process,(width/2+90),(height/2-115))
 # 蛇
 def SheDown():
@@ -406,53 +413,50 @@ def sellDiHun(minPageNum = 1,maxPageNum = 5):
     # y = PageOneY + (goodsRowID*39)
 def DiHunClick(id,runTimeArray):
     MapDown()
-    time.sleep(0.2)
-    if(id == 1):
-        NiuDown()
-        time.sleep(runTimeArray[id])
-    if(id == 2):
-        SheDown()
-        time.sleep(runTimeArray[id])
-    if(id == 3):
-        ZhuDown()
-        time.sleep(runTimeArray[id])
-        HangDown()
-        time.sleep(1)
-        Zhu2Down()
-        time.sleep(0.5)
-    if(id == 4):
-        ShiZiDown()
-        time.sleep(runTimeArray[id])
-    if(id == 5):
-        MiFengDown()
-        time.sleep(runTimeArray[id])
-        HangDown()
-        time.sleep(1)
-        MiFeng2Down()
-        time.sleep(0.5)
-    if(id == 6):
-        BianFuDown()
-        time.sleep(runTimeArray[id])
-    if(id == 7):
-        ZhiZhuDown()
-        time.sleep(runTimeArray[id])
-        HangDown()
-        time.sleep(1)
-        ZhiZhu2Down()
-        time.sleep(0.5)
-    if(id == 8):
-        BaoZiDown()
-        time.sleep(runTimeArray[id])
-    if(id == 9):
-        XieZiDown()
-        time.sleep(runTimeArray[id])
     if(id == 10):
+        NiuDown()
+    if(id == 9):
+        SheDown()
+    if(id == 8):
+        ZhuDown()
+    if(id == 7):
+        ShiZiDown()
+    if(id == 6):
+        MiFengDown()
+    if(id == 5):
+        BianFuDown()
+    if(id == 4):
+        ZhiZhuDown()
+    if(id == 3):
+        BaoZiDown()
+    if(id == 2):
+        XieZiDown()
+    if(id == 1):
         TuZiDown()
-        time.sleep(runTimeArray[id])
-    time.sleep(0.2)
-    # 点击位置后关闭地图
+def DiHunClickFZ(id,runTimeArray):
     MapDown()
-# 
+    time.sleep(0.2)
+    if(id == 10):
+        NiuDown()
+    if(id == 9):
+        SheDown()
+    if(id == 8):
+        Zhu2Down()
+    if(id == 7):
+        ShiZiDown()
+    if(id == 6):
+        MiFeng2Down()
+    if(id == 5):
+        BianFuDown()
+    if(id == 4):
+        ZhiZhu2Down()
+    if(id == 3):
+        BaoZiDown()
+    if(id == 2):
+        XieZiDown()
+    if(id == 1):
+        TuZiDown()
+
 def Guaji(oneSleep = 150,jiasu=True,sum=False):
     # 怪物选择青铜
     # settingDown()
@@ -547,43 +551,107 @@ funcArry = [
 ]
 
 def menuFunc(funcId):
+    global now_dihun_time,now_dihun_id
     # 自动复活
     if funcId == 1:
-        configJSON['relive'] = ~configJSON['relive']
+        configJSON['relive'] = not configJSON['relive']
         input(f'''自动复活功能成功修改为 {'已开启' if configJSON['relive'] else '已关闭'}(按任意键返回菜单)''')
         menu()
     # 挂机控制
     if funcId == 2:
-        configJSON['hang'] = ~configJSON['hang']
+        configJSON['hang'] = not configJSON['hang']
         print('''到怪的位置处才开始挂: 只有到怪物点的时候才开启时时挂机''')
         print('''时时挂机状态: 只有到怪物点的时候才开启''')
         input(f'''挂机控制功能成功修改为 {'到怪的位置处才开始挂' if configJSON['hang'] else '时时挂机状态'}(按任意键返回菜单)''')
         menu()
+    #开启关闭挂机 
+    if funcId == 6 or funcId == 7:
+        if funcId == 7:
+            t = int(input('输入延时的秒数:'))
+            print('等待中...')
+            time.sleep(t)
+        now_dihun_id = 0 if now_dihun_id else '1'
+        # 如果是开启给time附上初值
+        if now_dihun_id :
+            now_dihun_time = configJSON['stayTimeArray'][now_dihun_id]
+        input(f'''挂机 {'已开启' if now_dihun_id else '已关闭'}(按任意键返回菜单)''')
+        menu()
 
-sleepTime = 1
-def openThreading():
-    global sum,sleepTime
-    sum = sum + 1
-    print(sum)
-    threaProcess = threading.Timer(sleepTime,openThreading)
+now_dihun_id = 0
+now_dihun_time = 0
+# isRuning 用于校验是否到达点
+isRuning = False
+# 存储整个页面的图像内容
+hwndDC = 0
+# 挂机状态控制
+def guajiControl():
+    global isRuning
+    # 时间到零了的情况
+    if now_dihun_time == 0:
+         # id往下走
+        now_dihun_id = str(int(now_dihun_id) + 1)
+        if now_dihun_id == 0:
+            now_dihun_id = '1'
+        # 更新时间
+        now_dihun_time = configJSON['stayTimeArray'][now_dihun_id]
+        # 开启跑路
+        isRuning = True
+    else:
+        now_dihun_time = now_dihun_time - 1
+# 跑图校验
+def runMap():
+    # 在跑图的情况下检测地图是否开启
+    if isRuning:
+        # 校验地图是否开启 前往当前目的地
+        mapPixel = GetPixel(int(width/2 - 270),int(height/2 - 230))
+        # 没开就打开并且点击去处
+        if mapPixel != 4461898:
+            DiHunClick()
+            # 到达后点的数据为 59 or 1005644
+    # GetPixel
+def setInterval1s():
+     # 开启挂机之后才进行
+    if now_dihun_id:
+        guajiControl()
+        runMap()
+    threaProcess = threading.Timer(1,setInterval1s)
+    threaProcess.start()
+def setInterval0_4s():
+    global hwndDC
+    # 1.更新图形层数据
+    hwndDC = win32gui.GetDC(process)
+    # 复活点击功能
+    relivePixel = GetPixel(int(width/2),int(height/2 + 50))
+    if relivePixel == 399157:
+        ReliveDown()
+    # 时时挂机功能
+    # 挂机标识有四个位置
+    guajiCheck1 = GetPixel(int(width/2 + 162),int(height/2 - 270))
+    guajiCheck2 = GetPixel(int(width/2 + 162),int(height/2 - 250))
+    guajiCheck3 = GetPixel(int(width/2 + 132),int(height/2 - 270))
+    guajiCheck4 = GetPixel(int(width/2 + 132),int(height/2 - 260))
+    # 站立模式三个位置
+    guajiCheck5 = GetPixel(int(width/2 + 162),int(height/2 - 240))
+    guajiCheck6 = GetPixel(int(width/2 + 162),int(height/2 - 220))
+    guajiCheck7 = GetPixel(int(width/2 + 132),int(height/2 - 230))
+    if not (
+        guajiCheck1 == 65280 or 
+        guajiCheck2 == 65280 or 
+        guajiCheck3 == 65280 or 
+        guajiCheck4 == 65280 or 
+        guajiCheck5 == 65280 or
+        guajiCheck6 == 65280 or
+        guajiCheck7 == 65280 ):
+        HangDown()
+    threaProcess = threading.Timer(1,setInterval0_4s)
     threaProcess.start()
 def menu():
     # global configJSON
-    def readConfig():
-        global configJSON
-        file = open('./config.json', 'r')
-        content = file.read()
-        configJSON = json.loads(content)
-        file.close()
-    def writeConfig():
-        content = json.dumps(configJSON)
-        file = open('./config.json', 'w')
-        file.write(content)
-        file.close()
-    readConfig()
     system('cls')
-    # 开启一个线程扫描 用于挂机检测和到点检测 和 复活检测
-    openThreading()
+    # 开启一个每秒扫描一次的线程
+    setInterval1s()
+    # 0.4s扫描一次的线程
+    setInterval0_4s()
     print(f'''键位             |                功能描述                |    当前状态''')
     print('---------------------------------------------------------------------------')
     print(f'''1                |                自动复活                |    {'已开启' if configJSON['relive'] else '已关闭'}''')
@@ -594,11 +662,15 @@ def menu():
     print('---------------------------------------------------------------------------')
     print(f'''4                |        单个怪停留时间('怪物id':时长)    |    {configJSON['stayTimeArray']}''')
     print('---------------------------------------------------------------------------')
-    print(f'''5                |  扫描强度(自动复活和自动挂机的反应速度) |    {configJSON['interval']}s（单位|秒）''')
+    print(f'''5                |  扫描强度(自动复活和自动挂机的反应速度)  |    {configJSON['interval']}s（单位|秒）''')
     print('---------------------------------------------------------------------------')
-    print(f'''6                |                开启挂机                 |    {'已开启' if configJSON['openHit'] else '已关闭'}''')
+    print(f'''6                |            (开启 | 关闭)挂机            |    {'已开启' if not now_dihun_id else '已关闭'}''')
     print('---------------------------------------------------------------------------')
-    id = input('输入需要修改的功能的键位:')
+    print(f'''7                |           延时(开启 | 关闭)挂机          |    {'已开启' if not now_dihun_id else '已关闭'}''')
+    print('---------------------------------------------------------------------------')
+    print(f'''8                |          查看离下一波开始的剩余时间      |    ''')
+    print('---------------------------------------------------------------------------')
+    id = input('输入需要修改的功能的键位(暂都不可使用，除了6):')
     if id == '1' :
         menuFunc(1)
     elif id == '2':
@@ -607,13 +679,24 @@ def menu():
         menuFunc(3)
     elif id == '4':
         menuFunc(4)
-    elif id == '4':
+    elif id == '5':
         menuFunc(5)
-    elif id == '4':
+    elif id == '6':
         menuFunc(6)
     else:
         input('未找到指令所属功能(按任意键返回菜单)')
         menu()
+def readConfig():
+    global configJSON
+    file = open('./config.json', 'r')
+    content = file.read()
+    configJSON = json.loads(content)
+    file.close()
+def writeConfig():
+    content = json.dumps(configJSON)
+    file = open('./config.json', 'w')
+    file.write(content)
+    file.close()
 # mainProgram
 def loadFuncMenu(ProcessId,chidrenNeed):
     global height,width,process
@@ -635,6 +718,9 @@ def loadFuncMenu(ProcessId,chidrenNeed):
     left,top,right,bottom = win32gui.GetWindowRect(flashID)
     width = right-left
     height = bottom - top
+    readConfig()
+    menu()
+
     # MapDown()
     # time.sleep(1)
     # MapDown()
@@ -643,7 +729,7 @@ def loadFuncMenu(ProcessId,chidrenNeed):
     #     return getBrowser()
     # mouseClick(flashID,width/2,height/2)
     # mouseClick(process,width/2-220,height-12)
-    # sellClothesFragments(3,1,1,8,8)
+    # sellClothesFragments(2,1,1,8,8)
     # mouseDrag(process,983,303,674,305)
     # mouseDrag(process,1023,303,714,305)
     # sellDiHun(3,5)
@@ -656,7 +742,7 @@ def loadFuncMenu(ProcessId,chidrenNeed):
     # openSometing('first')
     # eatSmallFire()
     # eatBlueFire()
-    shangjin()
+    # shangjin()
     # zhanMo()
 
 
