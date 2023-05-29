@@ -7,9 +7,16 @@ import win32api
 import win32con
 import time
 import json
+import re
 import scapy.all as scapy
 
 # import scapy_http.http
+# LInput() 限制级别input
+def LInput(text,reg):
+    val = input(text)
+    if (not re.search(reg,val)) == True:
+        print('非法输入，请重新输入')
+        LInput(text,reg)
 # 返回指定坐标像素点
 def GetPixel(x,y):
     pixel = win32gui.GetPixel(hwndDC,x,y)
@@ -529,7 +536,7 @@ def getChildren(jubing, mouse,childrenS,chidrenNeed):
                 'name': name or 'null',
                 'processId': jubing,
             })
-        if(name.find('无标题 - QQ浏览器') != -1 and not chidrenNeed):
+        if(name.find('无标题 - QQ浏览器') != -1 and (not chidrenNeed)):
             childrenS.append({
                 'name': name or 'null',
                 'processId': jubing,
@@ -549,23 +556,47 @@ funcArry = [
     { "name":"自动复活","id":2,"state":False },
     { "name":"帝魂挂机","id":1,"state":False },
 ]
-
+now_dihun_id = 0
+now_dihun_time = 0
+# isRuning 用于校验是否到达点
+isRuning = False
+# 存储整个页面的图像内容
+hwndDC = 0
+# 帝魂坐标
+diHunPosition = {
+    "10":[(width/2+90),(height/2-115)],
+    "9":[(width/2+40),(height/2-75)],
+    "8":[(width/2+45),(height/2)],
+    "7":[(width/2+30),(height/2+90)],
+    "6":[(width/2-55),(height/2+85)],
+    "5":[(width/2-150),(height/2+105)],
+    "4":[(width/2-165),(height/2+50)],
+    "3":[(width/2-180),(height/2-50)],
+    "2":[(width/2-145),(height/2-120)],
+    "1":[(width/2-45),(height/2-130)],
+}
+# 用于辅助的帝魂坐标
+diHunPosition2 = json.loads(json.dumps(diHunPosition))
+diHunPosition2['8'] = [(width/2+25),(height/2)]
+diHunPosition2['6'] = [(width/2-100),(height/2+80)]
+diHunPosition2['4'] = [(width/2-170),(height/2+35)]
 def menuFunc(funcId):
     global now_dihun_time,now_dihun_id
     # 自动复活
     if funcId == 1:
-        configJSON['relive'] = not configJSON['relive']
+        configJSON['relive'] = (not configJSON['relive'])
         input(f'''自动复活功能成功修改为 {'已开启' if configJSON['relive'] else '已关闭'}(按任意键返回菜单)''')
         menu()
     # 挂机控制
     if funcId == 2:
-        configJSON['hang'] = not configJSON['hang']
+        configJSON['hang'] = (not configJSON['hang'])
         print('''到怪的位置处才开始挂: 只有到怪物点的时候才开启时时挂机''')
         print('''时时挂机状态: 只有到怪物点的时候才开启''')
         input(f'''挂机控制功能成功修改为 {'到怪的位置处才开始挂' if configJSON['hang'] else '时时挂机状态'}(按任意键返回菜单)''')
         menu()
     #开启关闭挂机 
     if funcId == 6 or funcId == 7:
+        positionId = input('选择怪物定位模式(1.主要模式 2.辅助拉怪)(默认1):') 
         if funcId == 7:
             t = int(input('输入延时的秒数:'))
             print('等待中...')
@@ -577,12 +608,6 @@ def menuFunc(funcId):
         input(f'''挂机 {'已开启' if now_dihun_id else '已关闭'}(按任意键返回菜单)''')
         menu()
 
-now_dihun_id = 0
-now_dihun_time = 0
-# isRuning 用于校验是否到达点
-isRuning = False
-# 存储整个页面的图像内容
-hwndDC = 0
 # 挂机状态控制
 def guajiControl():
     global isRuning
@@ -604,10 +629,12 @@ def runMap():
     if isRuning:
         # 校验地图是否开启 前往当前目的地
         mapPixel = GetPixel(int(width/2 - 270),int(height/2 - 230))
-        # 没开就打开并且点击去处
+        # 没开就打开地图
         if mapPixel != 4461898:
-            DiHunClick()
+            MapDown()
             # 到达后点的数据为 59 or 1005644
+        # 往当前目的地点击前往
+        mouseClick(process,(width - 178),115)
     # GetPixel
 def setInterval1s():
      # 开启挂机之后才进行
@@ -634,7 +661,7 @@ def setInterval0_4s():
     guajiCheck5 = GetPixel(int(width/2 + 162),int(height/2 - 240))
     guajiCheck6 = GetPixel(int(width/2 + 162),int(height/2 - 220))
     guajiCheck7 = GetPixel(int(width/2 + 132),int(height/2 - 230))
-    if not (
+    if not ( 
         guajiCheck1 == 65280 or 
         guajiCheck2 == 65280 or 
         guajiCheck3 == 65280 or 
@@ -664,9 +691,9 @@ def menu():
     print('---------------------------------------------------------------------------')
     print(f'''5                |  扫描强度(自动复活和自动挂机的反应速度)  |    {configJSON['interval']}s（单位|秒）''')
     print('---------------------------------------------------------------------------')
-    print(f'''6                |            (开启 | 关闭)挂机            |    {'已开启' if not now_dihun_id else '已关闭'}''')
+    print(f'''6                |            (开启 | 关闭)挂机            |    {'已开启' if (not now_dihun_id) else '已关闭'}''')
     print('---------------------------------------------------------------------------')
-    print(f'''7                |           延时(开启 | 关闭)挂机          |    {'已开启' if not now_dihun_id else '已关闭'}''')
+    print(f'''7                |           延时(开启 | 关闭)挂机          |    {'已开启' if (not now_dihun_id) else '已关闭'}''')
     print('---------------------------------------------------------------------------')
     print(f'''8                |          查看离下一波开始的剩余时间      |    ''')
     print('---------------------------------------------------------------------------')
