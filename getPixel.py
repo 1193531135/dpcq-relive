@@ -6,6 +6,7 @@ import win32com
 import time
 import json
 import threading
+import re
 def getPixel(hwnd,position,hwndDC):
     x,y = position
     hwndDC = hwndDC or win32gui.GetDC(hwnd)
