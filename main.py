@@ -649,7 +649,7 @@ def menu():
     # global configJSON
     system('cls')
     # 开启一个每秒扫描一次的线程
-    setInterval1s()
+    # setInterval1s()
     # 0.4s扫描一次的线程
     setInterval0_4s()
     print(f'''键位             |                功能描述                |    当前状态''')
