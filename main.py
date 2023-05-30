@@ -514,9 +514,9 @@ def menuFunc(funcId):
         positionId = input('选择插入的怪物位置:') or '1'
         positionP = input('选择怪物定位模式(1.主要模式 2.辅助拉怪)(默认1):') or '1'
         now_dihun_id = positionId
+        now_dihun_time = configJSON['stayTimeArray'][now_dihun_id]
         if positionP == "2":
             diHunPositionTrue = diHunPosition2
-        now_dihun_time = configJSON['stayTimeArray'][now_dihun_id]
     if funcId == 9:
         print(f'now_dihun_time:{now_dihun_time}')
         print(f'now_dihun_id:{now_dihun_id}')
