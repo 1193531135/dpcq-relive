@@ -65,58 +65,6 @@ def ReliveDown():
 def settingDown():
     mouseClick(process,(width - 15),85)
 
-# 帝魂专用方法
-# 牛
-def NiuDown():
-    mouseClick(process,(width/2+90),(height/2-115))
-# 蛇
-def SheDown():
-    
-    mouseClick(process,(width/2+40),(height/2-75))
-# 猪
-def ZhuDown():
-    
-    mouseClick(process,(width/2+45),(height/2))
-# 猪2
-def Zhu2Down():
-    mouseClick(process,(width/2+25),(height/2))
-# 狮子
-def ShiZiDown():
-    
-    mouseClick(process,(width/2+30),(height/2+90))
-# 蜜蜂
-def MiFengDown():
-    
-    mouseClick(process,(width/2-55),(height/2+85))
-# 蜜蜂2
-def MiFeng2Down():
-    mouseClick(process,(width/2-100),(height/2+80))
-# 蝙蝠
-def BianFuDown():
-    
-    mouseClick(process,(width/2-150),(height/2+105))
-# 蜘蛛
-def ZhiZhuDown():
-    
-    mouseClick(process,(width/2-165),(height/2+50))
-# 蜘蛛2
-def ZhiZhu2Down():
-    
-    mouseClick(process,(width/2-170),(height/2+35))
-# 豹子
-def BaoZiDown():
-    
-    mouseClick(process,(width/2-180),(height/2-50))
-# 蝎子
-def XieZiDown():
-    
-    mouseClick(process,(width/2-145),(height/2-120))
-# 兔子
-def TuZiDown():
-    
-    mouseClick(process,(width/2-45),(height/2-130))
-
-
 
 # 常用快捷方法
 # 背包点击
@@ -150,6 +98,8 @@ def clickGoodsMenu(pageNum,row,column,goodsType = 'suipian'):
     if goodsType == 'huoneng':clickRow = 2
     if goodsType == 'piliang':clickRow = 2
     if goodsType == 'first':clickRow = 1
+    # 点击页码
+    BackPageDown(pageNum)
     time.sleep(0.2)
     # 点击物品
     goodsX,goodsY = goodsDown(row,column)
@@ -264,7 +214,7 @@ def openSometing(double = 'piliang'):
     packPage = 2
     startRow = 1
     startColumn = 1
-    endRow = 5
+    endRow = 8
     endColumn = 8
     def clickAfterClickFire(a,b,c,d):
         clickGoodsMenu(a,b,c,d)
@@ -481,6 +431,8 @@ diHunPosition = {}
 # 用于辅助的帝魂坐标
 diHunPosition2 = {}
 diHunPositionTrue = {}
+# isOpenBack 是否开启背包，用于背包金检测
+isOpenBack = False
 def menuFunc(funcId):
     global now_dihun_time,now_dihun_id,diHunPositionTrue,isRuning,hwndDC
     # 自动复活
@@ -503,7 +455,7 @@ def menuFunc(funcId):
         if funcId == 7:
             t = int(input('输入延时的秒数:'))
             print('等待中...')
-            time.sleep(t)
+            time.sleep(int(t))
         now_dihun_id = 0 if now_dihun_id else '1'
         # 如果是开启给time附上初值
         if now_dihun_id :
@@ -526,7 +478,7 @@ def menuFunc(funcId):
         menu()
 # 挂机状态控制
 def guajiControl():
-    global isRuning,now_dihun_time,now_dihun_id
+    global isRuning,now_dihun_time,now_dihun_id,isOpenBack
     # 时间到零了的情况
     if now_dihun_time == 0:
         # # 开启后设置1为默认打怪
@@ -543,11 +495,38 @@ def guajiControl():
         # 开启跑路
         isRuning = True
     else:
-        global timsss
-        timsss = timsss + 1
-        print(timsss)
-        print('now_dihun_time',now_dihun_time)
         now_dihun_time = now_dihun_time - 1
+        print('now id:',now_dihun_id)
+        print('remainder:',now_dihun_time)
+# clearPack 用于清空包里的金
+def clearPack():
+    global now_dihun_id,isOpenBack,isRuning,now_dihun_time,hwndDC
+    # 在11的时候，并且到达，并且未开启back,并且时长大于0
+    if now_dihun_id == '11' and isRuning == False and (not isOpenBack) and now_dihun_time > 0:
+        # open back
+        BackDown()
+        isOpenBack = True
+        # to 2 page
+        BackPageDown(2)
+        # 点击整理
+        mouseClick(process,int(width/2 + 132),int(height/2 + 192))
+        # 至少必须0.3s
+        time.sleep(0.4)
+        # 刷新DC
+        hwndDC = win32gui.GetDC(process)
+        # 获取 startCell 和 lastCell 的坐标
+        sx,sy = goodsDown(1,1)
+        lx,ly = goodsDown(8,8)
+        startCell = win32gui.GetPixel(hwndDC,int(sx),int(sy))
+        lastCell = win32gui.GetPixel(hwndDC,int(lx),int(ly))
+        # start and end have kin run openSometing
+        if startCell == lastCell == 8903149:
+            openSometing()
+        # 关闭pack
+        BackDown()
+    # 最后一只boss 的时候 isOpenBack修正到 False
+    if now_dihun_id == '10' and isOpenBack == True:
+        isOpenBack = False
 # 跑图校验
 def runMap():
     global isRuning
@@ -558,7 +537,7 @@ def runMap():
         pixel = win32gui.GetPixel(hwndDC,int(width/2 - 270),int(height/2 - 230))
         if pixel != 4461898:
             MapDown()
-            # time.sleep(0.2)
+            time.sleep(0.2)
             # 到达后点的数据为 59 or 1005644
             # 到达后点的数据为 45652 or 1179809
         # 往当前目的地点击前往
@@ -571,14 +550,25 @@ def runMap():
             isRuning = False
 
     # GetPixel
-timsss = 0
 def setInterval1s():
      # 开启挂机之后才进行
     if now_dihun_id:
-        guajiControl()
         runMap()
+        clearPack()
     threaProcess = threading.Timer(1,setInterval1s)
     threaProcess.start()
+def setInterval1sTimeReduce():
+     # 开启挂机之后才进行,用于时间递减，绝不能加入任何time.sleep
+    if now_dihun_id:
+        guajiControl()
+    threaProcess = threading.Timer(1,setInterval1sTimeReduce)
+    threaProcess.start()
+def threadingControl():
+    setInterval1sTimeReduce()
+    # 用于在每秒检测中加入方法
+    setInterval1s()
+    # 用于在每0.4秒检测中加入方法
+    setInterval0_4s()
 def setInterval0_4s():
     global hwndDC
     # 1.更新图形层数据
@@ -728,10 +718,8 @@ def loadFuncMenu(ProcessId,chidrenNeed):
     height = bottom - top
     createPosition()
     readConfig()
-    # 开启一个每秒扫描一次的线程
-    setInterval1s()
-    # 0.4s扫描一次的线程
-    setInterval0_4s()
+    # 线程管理
+    threadingControl()
     menu()
     # MapDown()
     # time.sleep(1)
