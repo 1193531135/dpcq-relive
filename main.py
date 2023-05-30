@@ -511,7 +511,7 @@ def clearPack():
         # 点击整理
         mouseClick(process,int(width/2 + 132),int(height/2 + 192))
         # 至少必须0.3s
-        time.sleep(0.4)
+        time.sleep(0.7)
         # 刷新DC
         hwndDC = win32gui.GetDC(process)
         # 获取 startCell 和 lastCell 的坐标
