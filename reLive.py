@@ -133,9 +133,12 @@ def BackPageDown(pageSize):
     # 切换页面过快，等待0.5s再点击物品
     return [OnePageX,clienY]
 def goodsDown(PageOneX,PageOneY,goodsRowID,goodsColumnID):
+    PageOneX = width/2 - 135
+    PageOneY = height/2-210
     x = (PageOneX-6) + ((goodsColumnID - 1)*39)
     y = PageOneY + (goodsRowID*39)
     mouseClick(process,x,y)
+    print()
     return [x,y]
 def sellGoodsDown(x,y,clickRow):
     mouseClick(process,x+40,y+15+18*clickRow)

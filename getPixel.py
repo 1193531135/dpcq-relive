@@ -38,14 +38,24 @@ def window_capture(filename,hwnd):
     def sss(x,y):
         mouseClick(hwnd,int(x),int(y))
         return win32gui.GetPixel(hwndDC,int(x),int(y))
-    pixel = sss((width/2-75),(height/2+74))
+    # pixel = sss((width/2-75),(height/2+74))
+    def goodsDown(PageOneX,PageOneY,goodsRowID,goodsColumnID):
+        PageOneX = width/2 - 135
+        PageOneY = height/2-210
+        x = (PageOneX-6) + ((goodsColumnID - 1)*39)
+        y = PageOneY + (goodsRowID*39)
+        # mouseClick(hwnd,x,y)
+        print()
+        return [x,y]
+    x,y = goodsDown(1,1,8,8)
+    pixel = win32gui.GetPixel(hwndDC,int(x),int(y)) 
     # pixel = win32gui.GetPixel(hwndDC,int(w/2+90),int(h/2-115)) 
     # 65280 挂机检测右上点 （站立）
     # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 162),int(h/2 - 240)) 
     # 65280 挂机检测右下点（站立）
     # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 162),int(h/2 - 220)) 
     # 65280 挂机检测左下下点（站立）
-    pixel = win32gui.GetPixel(hwndDC,int(w/2 + 132),int(h/2 - 240)) 
+    # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 132),int(h/2 - 240)) 
 
     # 65280 挂机检测右上点
     # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 162),int(h/2 - 270)) 

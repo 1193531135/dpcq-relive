@@ -132,7 +132,9 @@ def BackPageDown(pageSize):
     mouseClick(process,clienX,clienY)
     # 切换页面过快，等待0.5s再点击物品
     return [OnePageX,clienY]
-def goodsDown(PageOneX,PageOneY,goodsRowID,goodsColumnID):
+def goodsDown(goodsRowID,goodsColumnID):
+    PageOneX = width/2 - 135
+    PageOneY = height/2-210
     x = (PageOneX-6) + ((goodsColumnID - 1)*39)
     y = PageOneY + (goodsRowID*39)
     mouseClick(process,x,y)
@@ -148,10 +150,9 @@ def clickGoodsMenu(pageNum,row,column,goodsType = 'suipian'):
     if goodsType == 'huoneng':clickRow = 2
     if goodsType == 'piliang':clickRow = 2
     if goodsType == 'first':clickRow = 1
-    pageSizeX,pageSizeY = BackPageDown(pageNum)
     time.sleep(0.2)
     # 点击物品
-    goodsX,goodsY = goodsDown(pageSizeX,pageSizeY,row,column)
+    goodsX,goodsY = goodsDown(row,column)
     time.sleep(0.2)
     # 点击物品菜单属性
     sellGoodsDown(goodsX,goodsY,clickRow)
@@ -557,7 +558,7 @@ def runMap():
         pixel = win32gui.GetPixel(hwndDC,int(width/2 - 270),int(height/2 - 230))
         if pixel != 4461898:
             MapDown()
-            time.sleep(0.2)
+            # time.sleep(0.2)
             # 到达后点的数据为 59 or 1005644
             # 到达后点的数据为 45652 or 1179809
         # 往当前目的地点击前往
