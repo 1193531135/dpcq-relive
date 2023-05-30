@@ -426,52 +426,6 @@ def sellDiHun(minPageNum = 1,maxPageNum = 5):
     time.sleep(0.2)
     # x = (PageOneX-6) + ((goodsColumnID - 1)*39)
     # y = PageOneY + (goodsRowID*39)
-def DiHunClick(id,runTimeArray):
-    MapDown()
-    if(id == 10):
-        NiuDown()
-    if(id == 9):
-        SheDown()
-    if(id == 8):
-        ZhuDown()
-    if(id == 7):
-        ShiZiDown()
-    if(id == 6):
-        MiFengDown()
-    if(id == 5):
-        BianFuDown()
-    if(id == 4):
-        ZhiZhuDown()
-    if(id == 3):
-        BaoZiDown()
-    if(id == 2):
-        XieZiDown()
-    if(id == 1):
-        TuZiDown()
-def DiHunClickFZ(id,runTimeArray):
-    MapDown()
-    time.sleep(0.2)
-    if(id == 10):
-        NiuDown()
-    if(id == 9):
-        SheDown()
-    if(id == 8):
-        Zhu2Down()
-    if(id == 7):
-        ShiZiDown()
-    if(id == 6):
-        MiFeng2Down()
-    if(id == 5):
-        BianFuDown()
-    if(id == 4):
-        ZhiZhu2Down()
-    if(id == 3):
-        BaoZiDown()
-    if(id == 2):
-        XieZiDown()
-    if(id == 1):
-        TuZiDown()
-   
  
 # 拉取全部的窗口
 def getProcessName(jubing, mouse,array,selectName):
@@ -634,25 +588,37 @@ def setInterval0_4s():
         ReliveDown()
     # 时时挂机功能
     # 挂机标识有四个位置
-    guajiCheck1 = GetPixel(int(width/2 + 162),int(height/2 - 270))
-    guajiCheck2 = GetPixel(int(width/2 + 162),int(height/2 - 250))
-    guajiCheck3 = GetPixel(int(width/2 + 132),int(height/2 - 270))
-    guajiCheck4 = GetPixel(int(width/2 + 132),int(height/2 - 260))
-    # 站立模式三个位置
-    guajiCheck5 = GetPixel(int(width/2 + 162),int(height/2 - 240))
-    guajiCheck6 = GetPixel(int(width/2 + 162),int(height/2 - 220))
-    guajiCheck7 = GetPixel(int(width/2 + 132),int(height/2 - 230))
-    guajiCheck8 = GetPixel(int(width/2 + 132),int(height/2 - 240))
-    if not ( 
-        guajiCheck1 == 65280 or 
-        guajiCheck2 == 65280 or 
-        guajiCheck3 == 65280 or 
-        guajiCheck4 == 65280 or 
-        guajiCheck5 == 65280 or
-        guajiCheck6 == 65280 or
-        guajiCheck8 == 65280 or
-        guajiCheck7 == 65280 ):
+    state = True
+    # print(time.time())
+    for i in range(0,200):
+        # 右侧点
+        pix = GetPixel(int(width/2 + 162),(int(height/2 - 120) - i))
+        # 左侧点
+        pix2 = GetPixel(int(width/2 + 132),(int(height/2 - 130) - i))
+        if pix == 65280 or pix2 == 65280:
+            state = False
+    # print(time.time())
+    if state:
         HangDown()
+    # guajiCheck1 = GetPixel(int(width/2 + 162),int(height/2 - 270))
+    # guajiCheck2 = GetPixel(int(width/2 + 162),int(height/2 - 250))
+    # guajiCheck3 = GetPixel(int(width/2 + 132),int(height/2 - 270))
+    # guajiCheck4 = GetPixel(int(width/2 + 132),int(height/2 - 260))
+    # # 站立模式三个位置
+    # guajiCheck5 = GetPixel(int(width/2 + 162),int(height/2 - 240))
+    # guajiCheck6 = GetPixel(int(width/2 + 162),int(height/2 - 220))
+    # guajiCheck7 = GetPixel(int(width/2 + 132),int(height/2 - 230))
+    # guajiCheck8 = GetPixel(int(width/2 + 132),int(height/2 - 240))
+    # if not ( 
+    #     guajiCheck1 == 65280 or 
+    #     guajiCheck2 == 65280 or 
+    #     guajiCheck3 == 65280 or 
+    #     guajiCheck4 == 65280 or 
+    #     guajiCheck5 == 65280 or
+    #     guajiCheck6 == 65280 or
+    #     guajiCheck8 == 65280 or
+    #     guajiCheck7 == 65280 ):
+    #     HangDown()
     threaProcess = threading.Timer(0.4,setInterval0_4s)
     threaProcess.start()
 def menu():
