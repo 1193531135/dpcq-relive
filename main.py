@@ -19,6 +19,7 @@ def LInput(text,reg):
         LInput(text,reg)
 # 返回指定坐标像素点
 def GetPixel(x,y):
+    global hwndDC
     pixel = win32gui.GetPixel(hwndDC,x,y)
     return pixel
 # 鼠标点击事件函数
@@ -49,10 +50,17 @@ def HangDown():
 #复活 
 def ReliveDown():
     mouseClick(process,(width/2),(height/2 + 65))
-    # time.sleep(0.1)
+    time.sleep(0.3)
     # # 唤起坐骑
-    # win32api.SendMessage(process, win32con.WM_KEYDOWN, 84, 0)
-    # win32api.SendMessage(process, win32con.WM_KEYUP, 84, 0)
+    win32api.SendMessage(process, win32con.WM_KEYDOWN, 84, 0)
+    win32api.SendMessage(process, win32con.WM_KEYUP, 84, 0)
+    # 起来选中
+    win32api.SendMessage(process, win32con.WM_KEYDOWN, 87, 0)
+    win32api.SendMessage(process, win32con.WM_KEYUP, 87, 0)
+    win32api.SendMessage(process, win32con.WM_KEYDOWN, 87, 0)
+    win32api.SendMessage(process, win32con.WM_KEYUP, 87, 0)
+    win32api.SendMessage(process, win32con.WM_KEYDOWN, 87, 0)
+    win32api.SendMessage(process, win32con.WM_KEYUP, 87, 0)
 #设置 
 def settingDown():
     mouseClick(process,(width - 15),85)
@@ -463,56 +471,7 @@ def DiHunClickFZ(id,runTimeArray):
         XieZiDown()
     if(id == 1):
         TuZiDown()
-
-def Guaji(oneSleep = 150,jiasu=True,sum=False):
-    # 怪物选择青铜
-    # settingDown()
-    count = 1
-    shudu = 1 if jiasu else 1.3
-    runTimeArray = {
-        1:11*shudu,
-        2:4*shudu,
-        3:6*shudu,
-        4:9*shudu,
-        5:3*shudu,
-        6:4*shudu,
-        7:4*shudu,
-        8:7*shudu,
-        9:7*shudu,
-        10:4*shudu,
-    }
-    allTime = 1800
-    for _ in (range(1,sum) if sum else repeat(None)):
-        if count == 1:
-            # 卖完帝魂,根据单个时长来确定吃几瓶药
-            yao = int((oneSleep * 10)/300)
-            for _2 in range(1,yao):
-                time.sleep(1)
-                mouseClick(process,width/2-220,height-12)
-            time.sleep(0.2)
-        # 地图上点击位置后，延时到达后
-        DiHunClick(count,runTimeArray)
-        # 点击挂机按钮
-        HangDown()
-        # 停留时长
-        time.sleep(oneSleep)
-        # 第一个击杀后才开始30分钟复活时间
-        if count != 1:
-            allTime = allTime - runTimeArray[count] - oneSleep
-        # 当最后一个击杀完毕，等待帝魂剩下重置时间后，时间重置
-        if count == 10:
-            # 减去跑路到第一个帝魂的时间,再减去刷背包时间43s(实际4个包+传送大概35s)
-            # 先休息差2-5 50s刷新,但是防止一些问题，可以多休息10s
-            sleepTime = allTime-runTimeArray[1]-50+10
-            if(sleepTime < 0):
-                sleepTime = 1
-            time.sleep(sleepTime)
-            # 2-5 50s
-            sellDiHun(2,5)
-            allTime = 1800
-        count += 1
-        if count == 11:count = 1
-    
+   
  
 # 拉取全部的窗口
 def getProcessName(jubing, mouse,array,selectName):
@@ -559,29 +518,16 @@ funcArry = [
 now_dihun_id = 0
 now_dihun_time = 0
 # isRuning 用于校验是否到达点
-isRuning = False
+isRuning = True
 # 存储整个页面的图像内容
 hwndDC = 0
 # 帝魂坐标
-diHunPosition = {
-    "10":[(width/2+90),(height/2-115)],
-    "9":[(width/2+40),(height/2-75)],
-    "8":[(width/2+45),(height/2)],
-    "7":[(width/2+30),(height/2+90)],
-    "6":[(width/2-55),(height/2+85)],
-    "5":[(width/2-150),(height/2+105)],
-    "4":[(width/2-165),(height/2+50)],
-    "3":[(width/2-180),(height/2-50)],
-    "2":[(width/2-145),(height/2-120)],
-    "1":[(width/2-45),(height/2-130)],
-}
+diHunPosition = {}
 # 用于辅助的帝魂坐标
-diHunPosition2 = json.loads(json.dumps(diHunPosition))
-diHunPosition2['8'] = [(width/2+25),(height/2)]
-diHunPosition2['6'] = [(width/2-100),(height/2+80)]
-diHunPosition2['4'] = [(width/2-170),(height/2+35)]
+diHunPosition2 = {}
+diHunPositionTrue = {}
 def menuFunc(funcId):
-    global now_dihun_time,now_dihun_id
+    global now_dihun_time,now_dihun_id,diHunPositionTrue,isRuning,hwndDC
     # 自动复活
     if funcId == 1:
         configJSON['relive'] = (not configJSON['relive'])
@@ -596,7 +542,9 @@ def menuFunc(funcId):
         menu()
     #开启关闭挂机 
     if funcId == 6 or funcId == 7:
-        positionId = input('选择怪物定位模式(1.主要模式 2.辅助拉怪)(默认1):') 
+        positionId = input('选择怪物定位模式(1.主要模式 2.辅助拉怪)(默认1):') or '1'
+        if positionId == "2":
+            diHunPositionTrue = diHunPosition2
         if funcId == 7:
             t = int(input('输入延时的秒数:'))
             print('等待中...')
@@ -607,35 +555,68 @@ def menuFunc(funcId):
             now_dihun_time = configJSON['stayTimeArray'][now_dihun_id]
         input(f'''挂机 {'已开启' if now_dihun_id else '已关闭'}(按任意键返回菜单)''')
         menu()
-
+    if funcId == 8:
+        positionId = input('选择插入的怪物位置:') or '1'
+        positionP = input('选择怪物定位模式(1.主要模式 2.辅助拉怪)(默认1):') or '1'
+        now_dihun_id = positionId
+        if positionP == "2":
+            diHunPositionTrue = diHunPosition2
+        now_dihun_time = configJSON['stayTimeArray'][now_dihun_id]
+    if funcId == 9:
+        print(f'now_dihun_time:{now_dihun_time}')
+        print(f'now_dihun_id:{now_dihun_id}')
+        print(f'isRuning:{isRuning}')
+        print(f'hwndDC:{hwndDC}')
+        input(f'''(按任意键返回菜单)''')
+        menu()
 # 挂机状态控制
 def guajiControl():
-    global isRuning
+    global isRuning,now_dihun_time,now_dihun_id
     # 时间到零了的情况
     if now_dihun_time == 0:
-         # id往下走
-        now_dihun_id = str(int(now_dihun_id) + 1)
-        if now_dihun_id == 0:
+        # # 开启后设置1为默认打怪
+        # if now_dihun_id == 0:
+        #     now_dihun_id = '1'
+        # 当id为11的时候 且休息时间完毕后，切换回1
+        if now_dihun_id == '11':
             now_dihun_id = '1'
+        else:
+            # id往下走
+            now_dihun_id = str(int(now_dihun_id) + 1)
         # 更新时间
         now_dihun_time = configJSON['stayTimeArray'][now_dihun_id]
         # 开启跑路
         isRuning = True
     else:
+        global timsss
+        timsss = timsss + 1
+        print(timsss)
+        print('now_dihun_time',now_dihun_time)
         now_dihun_time = now_dihun_time - 1
 # 跑图校验
 def runMap():
+    global isRuning
+    hwndDC = win32gui.GetDC(process)
     # 在跑图的情况下检测地图是否开启
     if isRuning:
         # 校验地图是否开启 前往当前目的地
-        mapPixel = GetPixel(int(width/2 - 270),int(height/2 - 230))
-        # 没开就打开地图
-        if mapPixel != 4461898:
+        pixel = win32gui.GetPixel(hwndDC,int(width/2 - 270),int(height/2 - 230))
+        if pixel != 4461898:
             MapDown()
+            time.sleep(0.2)
             # 到达后点的数据为 59 or 1005644
+            # 到达后点的数据为 45652 or 1179809
         # 往当前目的地点击前往
-        mouseClick(process,(width - 178),115)
+        x,y,reachPiexl1,reachPiexl2 = diHunPositionTrue[now_dihun_id]
+        mouseClick(process,int(x),int(y))
+        # 校验是否到达
+        isReach = win32gui.GetPixel(hwndDC,int(x),int(y))
+        if isReach == 42825 or isReach == 1114249 or isReach == 45652 or isReach == 1179809 or isReach == reachPiexl1 or isReach == reachPiexl2:
+            # 到达后关闭状态
+            isRuning = False
+
     # GetPixel
+timsss = 0
 def setInterval1s():
      # 开启挂机之后才进行
     if now_dihun_id:
@@ -661,6 +642,7 @@ def setInterval0_4s():
     guajiCheck5 = GetPixel(int(width/2 + 162),int(height/2 - 240))
     guajiCheck6 = GetPixel(int(width/2 + 162),int(height/2 - 220))
     guajiCheck7 = GetPixel(int(width/2 + 132),int(height/2 - 230))
+    guajiCheck8 = GetPixel(int(width/2 + 132),int(height/2 - 240))
     if not ( 
         guajiCheck1 == 65280 or 
         guajiCheck2 == 65280 or 
@@ -668,17 +650,14 @@ def setInterval0_4s():
         guajiCheck4 == 65280 or 
         guajiCheck5 == 65280 or
         guajiCheck6 == 65280 or
+        guajiCheck8 == 65280 or
         guajiCheck7 == 65280 ):
         HangDown()
-    threaProcess = threading.Timer(1,setInterval0_4s)
+    threaProcess = threading.Timer(0.4,setInterval0_4s)
     threaProcess.start()
 def menu():
     # global configJSON
     system('cls')
-    # 开启一个每秒扫描一次的线程
-    # setInterval1s()
-    # 0.4s扫描一次的线程
-    setInterval0_4s()
     print(f'''键位             |                功能描述                |    当前状态''')
     print('---------------------------------------------------------------------------')
     print(f'''1                |                自动复活                |    {'已开启' if configJSON['relive'] else '已关闭'}''')
@@ -691,11 +670,15 @@ def menu():
     print('---------------------------------------------------------------------------')
     print(f'''5                |  扫描强度(自动复活和自动挂机的反应速度)  |    {configJSON['interval']}s（单位|秒）''')
     print('---------------------------------------------------------------------------')
-    print(f'''6                |            (开启 | 关闭)挂机            |    {'已开启' if (not now_dihun_id) else '已关闭'}''')
+    print(f'''6                |            (开启 | 关闭)挂机            |    {'已关闭' if (not now_dihun_id) else '已开启'}''')
     print('---------------------------------------------------------------------------')
-    print(f'''7                |           延时(开启 | 关闭)挂机          |    {'已开启' if (not now_dihun_id) else '已关闭'}''')
+    print(f'''7                |           延时(开启 | 关闭)挂机          |    {'已关闭' if (not now_dihun_id) else '已开启'}''')
     print('---------------------------------------------------------------------------')
-    print(f'''8                |          查看离下一波开始的剩余时间      |    ''')
+    print(f'''8                |                锁定位置挂机               |   ''')
+    print('---------------------------------------------------------------------------')
+    print(f'''9                |          查看离下一波开始的剩余时间      |    ''')
+    print('---------------------------------------------------------------------------')
+    print(f'''10                |                查看所有参数              |    ''')
     print('---------------------------------------------------------------------------')
     id = input('输入需要修改的功能的键位(暂都不可使用，除了6):')
     if id == '1' :
@@ -710,6 +693,12 @@ def menu():
         menuFunc(5)
     elif id == '6':
         menuFunc(6)
+    elif id == '7':
+        menuFunc(7)
+    elif id == '8':
+        menuFunc(8)
+    elif id == '9':
+        menuFunc(9)
     else:
         input('未找到指令所属功能(按任意键返回菜单)')
         menu()
@@ -718,12 +707,37 @@ def readConfig():
     file = open('./config.json', 'r')
     content = file.read()
     configJSON = json.loads(content)
+    # 计算等待时长
+    timeAll = 0
+    for i in configJSON['stayTimeArray'].keys():
+        timeAll = timeAll + configJSON['stayTimeArray'][i]
+    configJSON['stayTimeArray']['11'] = 60*30 - timeAll - 20
     file.close()
 def writeConfig():
     content = json.dumps(configJSON)
     file = open('./config.json', 'w')
     file.write(content)
     file.close()
+# 在获取width和height之后生成坐标
+def createPosition():
+    global diHunPosition,diHunPosition2,diHunPositionTrue
+    diHunPosition = {
+    "11":[(width/2-45),(height/2-130),45652,1179809],
+    "10":[(width/2+85),(height/2-110),45652,1179809],
+    "9":[(width/2+40),(height/2-75),42825,1114249],
+    "8":[(width/2+45),(height/2),59,1005644],
+    "7":[(width/2+30),(height/2+90),42825,1114249],
+    "6":[(width/2-100),(height/2+80),42825,1114249],
+    "5":[(width/2-150),(height/2+105),42825,1114249],
+    "4":[(width/2-165),(height/2+50),45652,1179809],
+    "3":[(width/2-180),(height/2-50),37945,1574758],
+    "2":[(width/2-145),(height/2-120),74,221521],
+    "1":[(width/2-45),(height/2-130),45652,1179809],}
+    diHunPosition2 = json.loads(json.dumps(diHunPosition))
+    diHunPosition2['8'] = [(width/2+25),(height/2),37945,1574758]
+    diHunPosition2['6'] = [(width/2-75),(height/2+74),25634,393262]
+    diHunPosition2['4'] = [(width/2-170),(height/2+35),42825,1114249]
+    diHunPositionTrue = diHunPosition
 # mainProgram
 def loadFuncMenu(ProcessId,chidrenNeed):
     global height,width,process
@@ -745,9 +759,13 @@ def loadFuncMenu(ProcessId,chidrenNeed):
     left,top,right,bottom = win32gui.GetWindowRect(flashID)
     width = right-left
     height = bottom - top
+    createPosition()
     readConfig()
+    # 开启一个每秒扫描一次的线程
+    setInterval1s()
+    # 0.4s扫描一次的线程
+    setInterval0_4s()
     menu()
-
     # MapDown()
     # time.sleep(1)
     # MapDown()

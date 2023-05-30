@@ -27,22 +27,25 @@ def window_capture(filename,hwnd):
     left,top,right,bottom = win32gui.GetWindowRect(hwnd)
     w = right - left
     h = bottom - top
+    width = w
+    height = h
     # 获取居中的像素点
     # (-1 -1 1120657) (0 -1 1120657) (1 -1 1120657)
     # (-1 0 1316745) (0 0 399157) (0 0 399157)
     # (-1 1 399157) (0 1 399157) (1 1 13497846)
     # pixel = win32gui.GetPixel(hwndDC,int(w/2),int(h/2 + 50))
-    # 地图
-    # pixel = win32gui.GetPixel(hwndDC,int(w/2 - 270),int(h/2 - 230))
-    # 牛测试
-    mouseClick(hwnd,(w/2+90),(h/2-115))
-    pixel = win32gui.GetPixel(hwndDC,int(w/2+90),int(h/2-115)) 
+    # mouseClick(hwnd,(width/2-45),(height/2-130))
+    def sss(x,y):
+        mouseClick(hwnd,int(x),int(y))
+        return win32gui.GetPixel(hwndDC,int(x),int(y))
+    pixel = sss((width/2-75),(height/2+74))
+    # pixel = win32gui.GetPixel(hwndDC,int(w/2+90),int(h/2-115)) 
     # 65280 挂机检测右上点 （站立）
     # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 162),int(h/2 - 240)) 
     # 65280 挂机检测右下点（站立）
     # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 162),int(h/2 - 220)) 
     # 65280 挂机检测左下下点（站立）
-    # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 132),int(h/2 - 230)) 
+    pixel = win32gui.GetPixel(hwndDC,int(w/2 + 132),int(h/2 - 240)) 
 
     # 65280 挂机检测右上点
     # pixel = win32gui.GetPixel(hwndDC,int(w/2 + 162),int(h/2 - 270)) 
