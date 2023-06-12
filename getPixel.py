@@ -38,8 +38,8 @@ def window_capture(filename,hwnd):
     def sss(x,y):
         mouseClick(hwnd,int(x),int(y))
         return win32gui.GetPixel(hwndDC,int(x),int(y))
-    # pixel = sss((width/2-75),(height/2+74))
-    def goodsDown(PageOneX,PageOneY,goodsRowID,goodsColumnID):
+    pixel = sss((width/2-170),(height/2+40))
+    def goodsDown(goodsRowID,goodsColumnID):
         PageOneX = width/2 - 135
         PageOneY = height/2-210
         x = (PageOneX-6) + ((goodsColumnID - 1)*39)
@@ -47,21 +47,13 @@ def window_capture(filename,hwnd):
         # mouseClick(hwnd,x,y)
         print()
         return [x,y]
-    def BackPageDown(pageSize):
-      OnePageX = width/2 - 135
-      clienX = OnePageX + ((pageSize-1)*40)
-      clienY = height/2-210
-      mouseClick(hwnd,clienX,clienY)
-      # 切换页面过快，等待0.5s再点击物品
-      return [OnePageX,clienY]
-    x,y = goodsDown(1,1,1,1)
     # x = width/2 + 132
     # y = height/2 + 192
     # 8903149
     # BackPageDown(2)
     # mouseClick(hwnd,int(x),int(y))
     # time.sleep(0.3)
-    pixel = win32gui.GetPixel(hwndDC,int(x),int(y)) 
+    # pixel = 123
     # mouseClick(hwnd,int(x),int(y))
     # pixel = win32gui.GetPixel(hwndDC,int(w/2+90),int(h/2-115)) 
     # 65280 挂机检测右上点 （站立）

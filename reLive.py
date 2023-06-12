@@ -234,8 +234,8 @@ def eatSmallFire():
     packPage = 2
     startRow = 1
     startColumn = 1
-    endRow = 4
-    endColumn = 2
+    endRow = 8
+    endColumn = 8
     def clickAfterClickFire(a,b,c,d):
         clickGoodsMenu(a,b,c,d)
         time.sleep(0.2)
@@ -826,7 +826,7 @@ def loadFuncMenu(ProcessId,chidrenNeed):
     #     return getBrowser()
     # mouseClick(flashID,width/2,height/2)
     # mouseClick(process,width/2-220,height-12)
-    # sellClothesFragments(2,1,1,8,8)
+    sellClothesFragments(2,1,1,8,8)
     # mouseDrag(process,983,303,674,305)
     # mouseDrag(process,1023,303,714,305)
     # sellDiHun(3,5)
@@ -835,7 +835,7 @@ def loadFuncMenu(ProcessId,chidrenNeed):
     # Guaji(20)
     # relive()
     # eatFire(5)
-    openSometing()
+    # openSometing()
     # openSometing('first')
     # eatSmallFire()
     # eatBlueFire()

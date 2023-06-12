@@ -498,11 +498,18 @@ def guajiControl():
         now_dihun_time = now_dihun_time - 1
         print('now id:',now_dihun_id)
         print('remainder:',now_dihun_time)
+# goodsDown2 不点击
+def goodsDown2(goodsRowID,goodsColumnID):
+    PageOneX = width/2 - 135
+    PageOneY = height/2-210
+    x = (PageOneX-6) + ((goodsColumnID - 1)*39)
+    y = PageOneY + (goodsRowID*39)
+    return [x,y]
 # clearPack 用于清空包里的金
 def clearPack():
-    global now_dihun_id,isOpenBack,isRuning,now_dihun_time,hwndDC
+    global now_dihun_id,isOpenBack,isRuning,now_dihun_time,hwndDC,process
     # 在11的时候，并且到达，并且未开启back,并且时长大于0
-    if now_dihun_id == '11' and isRuning == False and (not isOpenBack) and now_dihun_time > 0:
+    if (now_dihun_id == '11') and (isRuning == False) and (not isOpenBack) and (now_dihun_time > 0):
         # open back
         BackDown()
         isOpenBack = True
@@ -511,19 +518,23 @@ def clearPack():
         # 点击整理
         mouseClick(process,int(width/2 + 132),int(height/2 + 192))
         # 至少必须0.3s
-        time.sleep(0.7)
+        time.sleep(1)
         # 刷新DC
         hwndDC = win32gui.GetDC(process)
         # 获取 startCell 和 lastCell 的坐标
-        sx,sy = goodsDown(1,1)
-        lx,ly = goodsDown(8,8)
+        sx,sy = goodsDown2(1,1)
+        lx,ly = goodsDown2(8,8)
+        print(sx,sy,hwndDC)
         startCell = win32gui.GetPixel(hwndDC,int(sx),int(sy))
         lastCell = win32gui.GetPixel(hwndDC,int(lx),int(ly))
         # start and end have kin run openSometing
         if startCell == lastCell == 8903149:
             openSometing()
+            print('1 =>>>>>>>>>>>>>>>')
+            BackDown()
+        else:
+            BackDown()
         # 关闭pack
-        BackDown()
     # 最后一只boss 的时候 isOpenBack修正到 False
     if now_dihun_id == '10' and isOpenBack == True:
         isOpenBack = False
@@ -540,6 +551,8 @@ def runMap():
             time.sleep(0.2)
             # 到达后点的数据为 59 or 1005644
             # 到达后点的数据为 45652 or 1179809
+        # 点一下设置到最高层
+        mouseClick(process,int(width/2 - 270),int(height/2 - 230))
         # 往当前目的地点击前往
         x,y,reachPiexl1,reachPiexl2 = diHunPositionTrue[now_dihun_id]
         mouseClick(process,int(x),int(y))
@@ -693,7 +706,7 @@ def createPosition():
     diHunPosition2 = json.loads(json.dumps(diHunPosition))
     diHunPosition2['8'] = [(width/2+25),(height/2),37945,1574758]
     diHunPosition2['6'] = [(width/2-75),(height/2+74),25634,393262]
-    diHunPosition2['4'] = [(width/2-170),(height/2+35),42825,1114249]
+    diHunPosition2['4'] = [(width/2-170),(height/2+40),37945,1574758]
     diHunPositionTrue = diHunPosition
 # mainProgram
 def loadFuncMenu(ProcessId,chidrenNeed):
