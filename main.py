@@ -433,6 +433,8 @@ diHunPosition2 = {}
 diHunPositionTrue = {}
 # isOpenBack 是否开启背包，用于背包金检测
 isOpenBack = False
+# 用于判断本轮在蝎子位置时是否已经点击过10号位置
+ifClick10 = True
 def menuFunc(funcId):
     global now_dihun_time,now_dihun_id,diHunPositionTrue,isRuning,hwndDC
     # 自动复活
@@ -540,7 +542,7 @@ def clearPack():
         isOpenBack = False
 # 跑图校验
 def runMap():
-    global isRuning
+    global isRuning,ifClick10
     hwndDC = win32gui.GetDC(process)
     # 在跑图的情况下检测地图是否开启
     if isRuning:
@@ -555,6 +557,15 @@ def runMap():
         mouseClick(process,int(width/2 - 270),int(height/2 - 230))
         # 往当前目的地点击前往
         x,y,reachPiexl1,reachPiexl2 = diHunPositionTrue[now_dihun_id]
+        # 用于2的时候坐骑
+        if now_dihun_id == '1':
+            # 1的时候启用
+            ifClick10 = True
+        if ifClick10 and now_dihun_id == '2':
+            x2,y2,r1,r1 = diHunPositionTrue['10']
+            mouseClick(process,int(x2),int(y2))
+            # 点击完成后取消状态
+            ifClick10 = False
         mouseClick(process,int(x),int(y))
         # 校验是否到达
         isReach = win32gui.GetPixel(hwndDC,int(x),int(y))
