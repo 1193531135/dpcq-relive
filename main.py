@@ -511,7 +511,7 @@ def goodsDown2(goodsRowID,goodsColumnID):
 def clearPack():
     global now_dihun_id,isOpenBack,isRuning,now_dihun_time,hwndDC,process
     # 在10的时候，并且到达，并且未开启back,并且时长大于120
-    if (now_dihun_id == '10') and (isRuning == False) and (not isOpenBack) and (now_dihun_time > 120):
+    if (now_dihun_id == '10') and (isRuning == False) and (not isOpenBack) and (now_dihun_time < 120) and (now_dihun_time > 0):
         # open back
         BackDown()
         isOpenBack = True
