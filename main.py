@@ -490,7 +490,7 @@ def guajiControl():
         else:
             # id往下走
             now_dihun_id = str(int(now_dihun_id) + 1)
-        # 更新时间
+        # 更新时间 提前2s过去
         now_dihun_time = configJSON['stayTimeArray'][now_dihun_id]
         # 开启跑路
         isRuning = True

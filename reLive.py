@@ -763,7 +763,7 @@ def readConfig():
     timeAll = 0
     for i in configJSON['stayTimeArray'].keys():
         timeAll = timeAll + configJSON['stayTimeArray'][i]
-    configJSON['stayTimeArray']['11'] = 60*30 - timeAll - 20
+    configJSON['stayTimeArray']['11'] = 60*30 - timeAll - 20 - 5
     file.close()
 def writeConfig():
     content = json.dumps(configJSON)
@@ -826,7 +826,7 @@ def loadFuncMenu(ProcessId,chidrenNeed):
     #     return getBrowser()
     # mouseClick(flashID,width/2,height/2)
     # mouseClick(process,width/2-220,height-12)
-    sellClothesFragments(2,1,1,8,8)
+    # sellClothesFragments(2,1,1,8,8)
     # mouseDrag(process,983,303,674,305)
     # mouseDrag(process,1023,303,714,305)
     # sellDiHun(3,5)
@@ -835,7 +835,7 @@ def loadFuncMenu(ProcessId,chidrenNeed):
     # Guaji(20)
     # relive()
     # eatFire(5)
-    # openSometing()
+    openSometing()
     # openSometing('first')
     # eatSmallFire()
     # eatBlueFire()
