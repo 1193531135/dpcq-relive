@@ -570,11 +570,9 @@ def runMap():
         # 校验是否到达
         isReach = win32gui.GetPixel(hwndDC,int(x),int(y))
         if isReach == 42825 or isReach == 1114249 or isReach == 45652 or isReach == 1179809 or isReach == reachPiexl1 or isReach == reachPiexl2:
-            # 到达后关闭状态
+            # 到达后关闭状态 并且关闭地图
             isRuning = False
-            # 休息时关闭地图
-            if now_dihun_id == '11':
-                MapDown()
+            MapDown()
 
     # GetPixel
 def setInterval1s():
