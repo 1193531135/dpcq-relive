@@ -510,8 +510,8 @@ def goodsDown2(goodsRowID,goodsColumnID):
 # clearPack 用于清空包里的金
 def clearPack():
     global now_dihun_id,isOpenBack,isRuning,now_dihun_time,hwndDC,process
-    # 在11的时候，并且到达，并且未开启back,并且时长大于0
-    if (now_dihun_id == '11') and (isRuning == False) and (not isOpenBack) and (now_dihun_time > 0):
+    # 在10的时候，并且到达，并且未开启back,并且时长大于120
+    if (now_dihun_id == '10') and (isRuning == False) and (not isOpenBack) and (now_dihun_time > 120):
         # open back
         BackDown()
         isOpenBack = True
@@ -537,8 +537,8 @@ def clearPack():
         else:
             BackDown()
         # 关闭pack
-    # 最后一只boss 的时候 isOpenBack修正到 False
-    if now_dihun_id == '10' and isOpenBack == True:
+    # 休息时 isOpenBack 修正到 False
+    if now_dihun_id == '11' and isOpenBack == True:
         isOpenBack = False
 # 跑图校验
 def runMap():
@@ -572,6 +572,9 @@ def runMap():
         if isReach == 42825 or isReach == 1114249 or isReach == 45652 or isReach == 1179809 or isReach == reachPiexl1 or isReach == reachPiexl2:
             # 到达后关闭状态
             isRuning = False
+            # 休息时关闭地图
+            if now_dihun_id == '11':
+                MapDown()
 
     # GetPixel
 def setInterval1s():
@@ -693,6 +696,9 @@ def readConfig():
     for i in configJSON['stayTimeArray'].keys():
         timeAll = timeAll + configJSON['stayTimeArray'][i]
     configJSON['stayTimeArray']['11'] = 60*30 - timeAll - 20 - 5
+    # 给10留出120s清包的时间
+    configJSON['stayTimeArray']['11'] = configJSON['stayTimeArray']['11'] - 120
+    configJSON['stayTimeArray']['10'] = configJSON['stayTimeArray']['10'] + 120
     file.close()
 def writeConfig():
     content = json.dumps(configJSON)
