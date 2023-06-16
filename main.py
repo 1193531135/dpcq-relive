@@ -681,7 +681,7 @@ def readConfig():
     timeAll = 0
     for i in configJSON['stayTimeArray'].keys():
         timeAll = timeAll + configJSON['stayTimeArray'][i]
-    configJSON['stayTimeArray']['11'] = 60*30 - timeAll - 20
+    configJSON['stayTimeArray']['11'] = 60*30 - timeAll - 20 - 5
     file.close()
 def writeConfig():
     content = json.dumps(configJSON)
