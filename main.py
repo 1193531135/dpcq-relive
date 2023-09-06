@@ -593,8 +593,8 @@ def threadingControl():
     # 用于在每秒检测中加入方法
     setInterval1s()
     # 用于在每0.4秒检测中加入方法
-    setInterval0_4s()
-def setInterval0_4s():
+    setInterval0_3s()
+def setInterval0_3s():
     global hwndDC
     # 1.更新图形层数据
     hwndDC = win32gui.GetDC(process)
@@ -635,7 +635,7 @@ def setInterval0_4s():
     #     guajiCheck8 == 65280 or
     #     guajiCheck7 == 65280 ):
     #     HangDown()
-    threaProcess = threading.Timer(0.4,setInterval0_4s)
+    threaProcess = threading.Timer(0.3,setInterval0_3s)
     threaProcess.start()
 def menu():
     # global configJSON
@@ -693,7 +693,8 @@ def readConfig():
     timeAll = 0
     for i in configJSON['stayTimeArray'].keys():
         timeAll = timeAll + configJSON['stayTimeArray'][i]
-    configJSON['stayTimeArray']['11'] = 60*30 - timeAll - 20 - 5
+    # configJSON['stayTimeArray']['11'] = 60*30 - timeAll - 20 - 2
+    configJSON['stayTimeArray']['11'] = 60*30 - timeAll - 20 - 6
     # 给10留出120s清包的时间
     configJSON['stayTimeArray']['11'] = configJSON['stayTimeArray']['11'] - 120
     configJSON['stayTimeArray']['10'] = configJSON['stayTimeArray']['10'] + 120

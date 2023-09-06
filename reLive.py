@@ -287,10 +287,10 @@ def openSometing(double = 'piliang'):
                     clickAfterClickFire(packPage,row,column,double)
 def eatBlueFire():
     packPage = 2
-    startRow = 3
-    startColumn = 6
-    endRow = 7
-    endColumn = 7
+    startRow = 1
+    startColumn = 1
+    endRow = 4
+    endColumn = 8
     def clickAfterClickFire(a,b,c,d):
         clickGoodsMenu(a,b,c,d)
         time.sleep(0.2)
@@ -301,7 +301,7 @@ def eatBlueFire():
         mouseClick(process,width/2+120,height/2-125)
         time.sleep(0.2)
         # 循环吞噬蓝火
-        for i in range(1,100):
+        for i in range(1,120):
             mouseClick(process,width/2,height/2+115)
             time.sleep(0.2)
             mouseClick(process,width/2-80,height/2+30)
@@ -826,7 +826,7 @@ def loadFuncMenu(ProcessId,chidrenNeed):
     #     return getBrowser()
     # mouseClick(flashID,width/2,height/2)
     # mouseClick(process,width/2-220,height-12)
-    # sellClothesFragments(2,1,1,8,8)
+    sellClothesFragments(2,1,1,8,8)
     # mouseDrag(process,983,303,674,305)
     # mouseDrag(process,1023,303,714,305)
     # sellDiHun(3,5)
@@ -834,8 +834,8 @@ def loadFuncMenu(ProcessId,chidrenNeed):
     # Guaji(150)
     # Guaji(20)
     # relive()
-    # eatFire(5)
-    openSometing()
+    # eatFire(10)
+    # openSometing()
     # openSometing('first')
     # eatSmallFire()
     # eatBlueFire()
