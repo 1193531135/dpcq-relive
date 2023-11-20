@@ -20,9 +20,9 @@ def LInput(text,reg):
         print('非法输入，请重新输入')
         LInput(text,reg)
 # 返回指定坐标像素点
-def GetPixel(x,y):
+def GetPixel(x,y,DC):
     global hwndDC
-    pixel = win32gui.GetPixel(hwndDC,x,y)
+    pixel = win32gui.GetPixel(DC or hwndDC,x,y)
     return pixel
 # 键盘事件函数
 def keyDown(windowProcess,name):
@@ -52,17 +52,18 @@ def mouseDrag(windowProcess,x,y,x2,y2):
 def MapDown():
     mouseClick(process,(width - 178),115)
 # 挂机点击
-def HangDown():
+def HangDown(pro):
     # mouseClick(process,(width - 150),145)
-    keyDown(process,90)
+    keyDown(pro or process,90)
 #复活 
-def ReliveDown():
+def ReliveDown(pro):
+    process = pro or process
     mouseClick(process,(width/2),(height/2 + 65))
     time.sleep(0.3)
     # # 唤起坐骑
     win32api.SendMessage(process, win32con.WM_KEYDOWN, 84, 0)
     win32api.SendMessage(process, win32con.WM_KEYUP, 84, 0)
-    # 起来选中
+    # 起来选中 按三下
     win32api.SendMessage(process, win32con.WM_KEYDOWN, 87, 0)
     win32api.SendMessage(process, win32con.WM_KEYUP, 87, 0)
     win32api.SendMessage(process, win32con.WM_KEYDOWN, 87, 0)
@@ -603,36 +604,40 @@ def threadingControl():
     # setInterval1s()
     # 用于在每0.4秒检测中加入方法
     setInterval0_3s()
+    setInterval0_1s()
 def setInterval0_3s():
     global hwndDC,reliveControl
-    # 1.更新图形层数据
-    hwndDC = win32gui.GetDC(process)
-    # 复活点击功能
-    relivePixel = GetPixel(int(width/2),int(height/2 + 50))
-    if relivePixel == 399157 and reliveControl:
-        ReliveDown()
-        time.sleep(0.2)
-        HangDown()
-    # guajiCheck1 = GetPixel(int(width/2 + 162),int(height/2 - 270))
-    # guajiCheck2 = GetPixel(int(width/2 + 162),int(height/2 - 250))
-    # guajiCheck3 = GetPixel(int(width/2 + 132),int(height/2 - 270))
-    # guajiCheck4 = GetPixel(int(width/2 + 132),int(height/2 - 260))
-    # # 站立模式三个位置
-    # guajiCheck5 = GetPixel(int(width/2 + 162),int(height/2 - 240))
-    # guajiCheck6 = GetPixel(int(width/2 + 162),int(height/2 - 220))
-    # guajiCheck7 = GetPixel(int(width/2 + 132),int(height/2 - 230))
-    # guajiCheck8 = GetPixel(int(width/2 + 132),int(height/2 - 240))
-    # if not ( 
-    #     guajiCheck1 == 65280 or 
-    #     guajiCheck2 == 65280 or 
-    #     guajiCheck3 == 65280 or 
-    #     guajiCheck4 == 65280 or 
-    #     guajiCheck5 == 65280 or
-    #     guajiCheck6 == 65280 or
-    #     guajiCheck8 == 65280 or
-    #     guajiCheck7 == 65280 ):
-    #     HangDown()
+    if type(process) == list:
+        for id in process:
+          # 1.更新图形层数据
+          hwndDC = win32gui.GetDC(id)
+          # 复活点击功能
+          relivePixel = GetPixel(int(width/2),int(height/2 + 50),hwndDC)
+          if relivePixel == 399157 and reliveControl:
+            ReliveDown(id)
+            time.sleep(0.2)
+            HangDown(id)
+    else:
+      # 1.更新图形层数据
+      hwndDC = win32gui.GetDC(process)
+      # 复活点击功能
+      relivePixel = GetPixel(int(width/2),int(height/2 + 50))
+      if relivePixel == 399157 and reliveControl:
+          ReliveDown()
+          time.sleep(0.2)
+          HangDown()
     threaProcess = threading.Timer(0.3,setInterval0_3s)
+    threaProcess.start()
+
+# 1s 10次的执行
+def setInterval0_1s():
+    # 空格点击
+    if type(process) == list:
+        for pro in process:
+            keyDown(pro,32)
+    else:
+      keyDown(process,32)
+    threaProcess = threading.Timer(0.1,setInterval0_1s)
     threaProcess.start()
 def menu():
     # global configJSON
@@ -726,13 +731,20 @@ def loadFuncMenu(ProcessId,chidrenNeed):
         global height,width,process
         system('cls')
         childrenID = []
-        win32gui.EnumChildWindows(ProcessId,lambda a,b:getChildren(a,b,childrenID,chidrenNeed),0)
+        # 全选
+        if type(ProcessId) == list:
+            for id in ProcessId:
+              win32gui.EnumChildWindows(id,lambda a,b:getChildren(a,b,childrenID,chidrenNeed),0)
+        else:
+            win32gui.EnumChildWindows(ProcessId,lambda a,b:getChildren(a,b,childrenID,chidrenNeed),0)
         if len(childrenID) == 0:
             input('未检测到目标浏览器的flash，请检查游戏是否打开')
             return getBrowser()
         print('!!进入当前功能页请勿缩放，最小最大化指定的的窗口!!')
-        flashID = childrenID[0]["processId"]
-        process = flashID
+        if type(ProcessId) == list:
+            process = list(map(lambda i:i["processId"],childrenID))
+        else:
+            process = childrenID[0]["processId"]
         # 退出全屏
         # win32gui.ShowWindow(ProcessId,win32con.SW_SHOWNORMAL)
         # 进入全屏
@@ -792,7 +804,13 @@ def findMainProcess(name,chidrenNeed):
         for index,item in enumerate(array):
             print(f"{index}. {item['name']}")
         print('进入进程前，请准备好窗口大小，窗口大小保证能完全正常展示游戏内所有的窗口，进入后不再变动')
-        MainProcessId = array[int(input(f"""查询到 {len(array)} 条进程， 选择id，按下回车键（enter）:"""))]['processId']
+        id = input(f"""查询到 {len(array)} 条进程， 选择id，按下回车键（enter）:""")
+        if id == -1:
+            MainProcessId = []
+            for item in array:
+                MainProcessId.append(item["processId"])
+        else:
+          MainProcessId = array[int(id)]['processId']
     loadFuncMenu(MainProcessId,chidrenNeed)
 
 

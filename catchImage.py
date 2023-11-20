@@ -1,4 +1,3 @@
-import math
 from os import system
 from itertools import repeat
 import threading
@@ -51,7 +50,7 @@ def findMainProcess():
         MainProcessId = array[0]['processId']
     if len(array) > 1:
         for index,item in enumerate(array):
-            print(f"{index}. {item['name']}")
+            print(f"{index}. {item['name']} -- {item['processId']}")
         MainProcessId = array[int(input(f"""查询到 {len(array)} 条进程， 选择id，按下回车键（enter）:"""))]['processId']
         capture_process_screenshot(MainProcessId,"catchImage.png")
 
