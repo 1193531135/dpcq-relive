@@ -8,7 +8,7 @@ import time
 def window_capture(filename,hwnd):
     hwnd = hwnd or 0  # 窗口的编号，0号表示当前活跃窗口
     # 根据窗口句柄获取窗口的设备上下文DC（Divice Context）
-    hwndDC = win32gui.GetWindowDC(hwnd)
+    # hwndDC = win32gui.GetWindowDC(hwnd)
     # 获取窗口的设备上下文Device Context。GetWindowDC包括了非客户区，而GetDC仅为客户区
     hwndDC = win32gui.GetDC(hwnd)
     # 根据窗口的DC获取mfcDC
@@ -27,11 +27,17 @@ def window_capture(filename,hwnd):
     # 截取从左上角（startX，starty）长宽为（w，h）的图片
     startX = int(0)
     starty = int(0)
+    nameImage = [(108,18),(126,20)]
+    # # 为bitmap开辟空间
+    # saveBitMap.CreateCompatibleBitmap(mfcDC,w, h)
+    # # 高度saveDC，将截图保存到saveBitmap中
+    # saveDC.SelectObject(saveBitMap)
+    # saveDC.BitBlt((0,0), (w, h), mfcDC, (startX, starty), win32con.SRCCOPY)
     # 为bitmap开辟空间
-    saveBitMap.CreateCompatibleBitmap(mfcDC,w, h)
+    saveBitMap.CreateCompatibleBitmap(mfcDC,nameImage[1][0],nameImage[1][1])
     # 高度saveDC，将截图保存到saveBitmap中
     saveDC.SelectObject(saveBitMap)
-    saveDC.BitBlt((0,0), (w, h), mfcDC, (startX, starty), win32con.SRCCOPY)
+    saveDC.BitBlt((0,0), (nameImage[1]), mfcDC, (nameImage[0]), win32con.SRCCOPY)
     # saveDC.BitBlt(((w-image['w'])/2,(h-image['h'])/2), (image['w'], image['h']), mfcDC, (0, 0), win32con.SRCCOPY)
     saveBitMap.SaveBitmapFile(saveDC, filename)
 
