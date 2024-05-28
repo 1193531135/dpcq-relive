@@ -52,7 +52,9 @@ def findMainProcess():
         for index,item in enumerate(array):
             print(f"{index}. {item['name']} -- {item['processId']}")
         MainProcessId = array[int(input(f"""查询到 {len(array)} 条进程， 选择id，按下回车键（enter）:"""))]['processId']
+        startTime = time.time() * 1000
         capture_process_screenshot(MainProcessId,"catchImage.png")
-
+        endTime = time.time() * 1000
+        print(endTime - startTime)
 
 findMainProcess()

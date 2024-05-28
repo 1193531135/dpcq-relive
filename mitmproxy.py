@@ -19,10 +19,11 @@ def response(f):
     request = f.request
     response = f.response
     if(request.url.find('/cms') != -1 and request.method != "OPTIONS"):
+        print(f"""url=>>{request.url}""")
         response.status_code = 200
         res = responseM.copy()
         if(request.url.find('/proj/template111/page') != -1):
-            res.data.list = [
+            res['data']['list'] = [
                 {
                     "id": 75,
                     "workoutName": "ABS TEST 30 INTERMEDIATE",
@@ -38,7 +39,7 @@ def response(f):
                     "status": 1
                 },
             ]
-        if(request.url.find('/proj/template111/page') != -1):
+        if(request.url.find('/proj/template121/page') != -1):
             res.data.list = [
                 {
                     "id": 75,

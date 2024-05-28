@@ -4,44 +4,52 @@ import win32api
 import win32con
 import win32com
 import time
-
-def window_capture(filename,hwnd):
+# import numpy as np
+# import cv2
+from cnocr import CnOcr
+rec_root="./models/cnocr"
+det_root="./models/cnstd"
+print('开始加载模型...')
+ocr = CnOcr(cand_alphabet=[str],rec_root=rec_root,det_root=det_root)
+print('模型加载成功')
+# 地址 id x,y,x2,y2
+def window_capture(filename,hwnd,x = 0,y = 0,w = 100,h = 100):
     hwnd = hwnd or 0  # 窗口的编号，0号表示当前活跃窗口
     # 根据窗口句柄获取窗口的设备上下文DC（Divice Context）
     # hwndDC = win32gui.GetWindowDC(hwnd)
     # 获取窗口的设备上下文Device Context。GetWindowDC包括了非客户区，而GetDC仅为客户区
     hwndDC = win32gui.GetDC(hwnd)
-    # 根据窗口的DC获取mfcDC
+    # 根据窗口的DC获取mfcDC,（创建携带python方法的 python DC，用于执行python的操作，理解为此时还是上下文DC）
     mfcDC = win32ui.CreateDCFromHandle(hwndDC)
-    # mfcDC创建可兼容的DC
+    # mfcDC创建可兼容的DC,创建一个内存设备描述表
     saveDC = mfcDC.CreateCompatibleDC()
-    # 创建bigmap准备保存图片
+    # 创建bigmap（位图）准备保存图片
     saveBitMap = win32ui.CreateBitmap()
-    # 获取监控器信息
+    # 获取窗口宽高信息
     # left,top,right,bottom = win32gui.GetWindowRect(hwnd)
-    left,top,right,bottom = win32gui.GetWindowRect(hwnd)
-    w = right - left
-    h = bottom - top
-    # print w,h　　　#图片大小
-    image = { 'w':200,'h':200 }
-    # 截取从左上角（startX，starty）长宽为（w，h）的图片
-    startX = int(0)
-    starty = int(0)
-    nameImage = [(108,18),(126,20)]
-    # # 为bitmap开辟空间
+    # w = right - left
+    # h = bottom - top
     # saveBitMap.CreateCompatibleBitmap(mfcDC,w, h)
-    # # 高度saveDC，将截图保存到saveBitmap中
     # saveDC.SelectObject(saveBitMap)
     # saveDC.BitBlt((0,0), (w, h), mfcDC, (startX, starty), win32con.SRCCOPY)
-    # 为bitmap开辟空间
-    saveBitMap.CreateCompatibleBitmap(mfcDC,nameImage[1][0],nameImage[1][1])
-    # 高度saveDC，将截图保存到saveBitmap中
+    # 为bitmap开辟空间(以mfcDC对象创建一个兼容的bitmap)
+    saveBitMap.CreateCompatibleBitmap(mfcDC,w,h)
+    # 高度saveDC，将截图保存到saveBitmap中（把位图放入内存DC中）
     saveDC.SelectObject(saveBitMap)
-    saveDC.BitBlt((0,0), (nameImage[1]), mfcDC, (nameImage[0]), win32con.SRCCOPY)
+    saveDC.BitBlt((0,0), (w,h), mfcDC, (x,y), win32con.SRCCOPY)
     # saveDC.BitBlt(((w-image['w'])/2,(h-image['h'])/2), (image['w'], image['h']), mfcDC, (0, 0), win32con.SRCCOPY)
     saveBitMap.SaveBitmapFile(saveDC, filename)
-
-# window_capture("haha.jpg")
+    # signedIntsArray = saveBitMap.GetBitmapBits(True)
+    # img = np.frombuffer(signedIntsArray, dtype='uint8')
+    # img = cv2.imread(img)
+    # img = cv2.resize(img,(h,w),3)
+    # img.shape = (h, w, 3)
+    out = ocr.ocr_for_single_line(img_fp=filename)
+    # 销毁DC
+    win32gui.DeleteObject(saveBitMap.GetHandle())
+    saveDC.DeleteDC()
+    mfcDC.DeleteDC()
+    return out['text']
 array = []
 # name = ''
 name = ''
@@ -90,6 +98,7 @@ ids = input(f"""查询到 {len(array)} 条进程， 选择id，按下回车键�
 hwnd = array[int(ids[0])]['processId'] if len(ids) == 1 else array[int(ids[0])]['children'][int(ids[1])]['processId']
 print(hwnd)
 startTime = time.time() * 1000
-window_capture("position.jpg",hwnd)
+text = window_capture("position2.jpg",hwnd,115,76,67,20)
 endTime = time.time() * 1000
-print(endTime - startTime)
+print(f"""识别结果：{text} """)
+print(f"""耗时：{endTime - startTime} ms""")
